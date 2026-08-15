@@ -1,0 +1,450 @@
+.heroWrap {
+  position: relative;
+  /* GSAP pins this wrapper and uses the additional height as the scroll distance. */
+  height: 200vh;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Reduced motion: skip the scroll-jack entirely. No extra pin distance,
+   and the decorative slats/scroll-cue are dropped so the real heading
+   and CTA (already set to their final visible state in JS) aren't left
+   hidden underneath a frozen, un-flippable puzzle of panels. */
+.heroWrap[data-motion="reduced"] {
+  height: 100vh;
+}
+
+.heroWrap[data-motion="reduced"] .slatsContainer,
+.heroWrap[data-motion="reduced"] .scrollGuide {
+  display: none;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   SLATS CONTAINER
+   ========================================================= */
+
+.slatsContainer {
+  position: absolute;
+  top: 80px; /* Navbar clearance */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+/* =========================================================
+   INDIVIDUAL SLAT
+   ========================================================= */
+
+.slat {
+  position: relative;
+  flex: 1 1 0;
+  height: 100%;
+  perspective: 1400px;
+  perspective-origin: center center;
+  border-right: 1px solid var(--line);
+  will-change: transform, opacity;
+  transition: border-color 0.5s ease;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.slat:last-child {
+  border-right: none;
+}
+
+/* =========================================================
+   GSAP SCROLL WRAPPER (Outer)
+   ========================================================= */
+
+.scrollFlip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* =========================================================
+   CSS HOVER WRAPPER (Inner)
+   ========================================================= */
+
+.hoverFlip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Hover logic: Only flips if the user has not started scrolling — and
+   only on devices that actually have hover (a tap on touchscreens would
+   otherwise "stick" the flip on since there's no pointer to un-hover
+   with), and only if the user hasn't asked for reduced motion. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .heroWrap:not(.isScrolling) .slat:hover .hoverFlip {
+    transform: rotateY(180deg) translateZ(-30px);
+  }
+}
+
+/* =========================================================
+   SHARED FACE
+   ========================================================= */
+
+.slatFace {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   FRONT FACE
+   ========================================================= */
+
+.slatFront {
+  background: var(--background);
+  transition: background-color 0.5s ease;
+}
+
+.frontImg {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  width: 600%;
+  max-width: none;
+  height: calc(100% - 40px);
+  left: calc(var(--i) * -100%);
+  background-color: transparent;
+  background-image: url("/images/Logo.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  opacity: 0.95;
+  pointer-events: none;
+  transition: filter 0.5s ease;
+}
+
+/* Dark mode logo */
+:global(.dark) .frontImg {
+  filter: invert(1);
+}
+
+/* =========================================================
+   PANEL INDEX
+   ========================================================= */
+
+.idx {
+  position: absolute;
+  top: clamp(1rem, 3.6vh, 1.8rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  white-space: nowrap;
+  z-index: 2;
+  pointer-events: none;
+  transition: color 0.5s ease;
+}
+
+/* =========================================================
+   FRONT OVERLAY
+   ========================================================= */
+
+.slatFrontOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    color-mix(in srgb, var(--foreground) 18%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+/* =========================================================
+   BACK FACE
+   ========================================================= */
+
+.slatBack {
+  transform: rotateY(180deg);
+  background: var(--background);
+  transition: background-color 0.5s ease;
+}
+
+.backLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(1rem, 3vw, 1.6rem);
+  background: var(--background);
+  pointer-events: none;
+  transition: background-color 0.5s ease;
+}
+
+/* =========================================================
+   BACK TYPOGRAPHY
+   ========================================================= */
+
+.word {
+  font-family: var(--font-display), serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.4vw, 1.9rem);
+  color: var(--foreground);
+  transition: color 0.5s ease;
+}
+
+.cap {
+  margin-top: 0.7rem;
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.5rem, 1.2vw, 0.62rem);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  max-width: 20ch;
+  transition: color 0.5s ease;
+}
+
+.num {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  transition: color 0.5s ease;
+}
+
+/* =========================================================
+   WELCOME SCREEN
+   ========================================================= */
+
+.welcomeScreen {
+  position: absolute;
+  top: 80px; /* Navbar clearance */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  text-align: center;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  transition: background-color 0.5s ease;
+}
+
+/* =========================================================
+   WELCOME LOGO
+   ========================================================= */
+
+.wMark {
+  width: clamp(90px, 12vw, 180px);
+  height: auto;
+  margin-bottom: 1.2rem;
+  will-change: transform, opacity;
+  transition: filter 0.5s ease;
+}
+
+:global(.dark) .wMark {
+  filter: invert(1);
+}
+
+/* =========================================================
+   ESTABLISHED LABEL
+   ========================================================= */
+
+.est {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  will-change: transform, opacity;
+  transition: color 0.5s ease;
+}
+
+/* =========================================================
+   MAIN HEADLINE
+   ========================================================= */
+
+.punchline {
+  font-family: var(--font-display), serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 4.5vw, 4.5rem);
+  line-height: 1.15;
+  color: var(--foreground);
+  max-width: 22ch;
+  margin-bottom: 1.2rem;
+  will-change: transform, opacity;
+  transition: color 0.5s ease;
+}
+
+.punchline em {
+  color: var(--accent);
+}
+
+/* =========================================================
+   SUBTITLE
+   ========================================================= */
+
+.sub {
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  will-change: transform, opacity;
+  transition: color 0.5s ease;
+}
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 2rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--background);
+  background-color: var(--foreground);
+  border: 1px solid var(--foreground);
+  transition:
+    background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  text-decoration: none;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+.ctaButton:hover {
+  background-color: transparent;
+  color: var(--foreground);
+  border-color: var(--accent);
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   GSAP SCROLL LOCK
+   ========================================================= */
+
+.isScrolling .slat {
+  pointer-events: none !important;
+}
+
+/* =========================================================
+   SCROLL GUIDE (Indicator)
+   ========================================================= */
+
+.scrollGuide {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  padding: 0.6rem 1.1rem 0.6rem 1.2rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--background) 78%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+/* Fade out the indicator immediately when the user begins scrolling */
+.isScrolling .scrollGuide {
+  opacity: 0;
+}
+
+.scrollText {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.scrollArrow {
+  width: 13px;
+  height: 13px;
+  color: var(--accent);
+  animation: scrollArrowNudge 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes scrollArrowNudge {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollArrow {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  /* Disable the desktop-style cursor on touch-sized layouts. */
+  .slat {
+    cursor: default;
+  }
+}

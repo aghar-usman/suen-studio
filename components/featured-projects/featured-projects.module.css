@@ -1,0 +1,208 @@
+.section {
+  position: relative;
+  background-color: var(--background);
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  position: relative;
+  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 4rem) 1.5rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.header a {
+  pointer-events: auto;
+}
+
+.scrollContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 1rem clamp(1.5rem, 5vw, 4rem) 5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .scrollContainer {
+    will-change: transform;
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 6px;
+}
+
+.imageMask {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: var(--line);
+}
+
+.image {
+  object-fit: cover;
+  transform: scale(1.02);
+  filter: saturate(0.85) sepia(0.08) contrast(1.05);
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), filter 1.2s ease;
+  will-change: transform;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--foreground);
+  opacity: 0.03;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+/* Hover States */
+.card:hover .image {
+  transform: scale(1);
+  filter: saturate(1.08) sepia(0) contrast(1);
+}
+
+.card:hover .overlay {
+  opacity: 0;
+}
+
+.metaContainer {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+  transition: border-color 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.card:hover .metaContainer {
+  border-color: var(--brass);
+}
+
+.endCta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem 1rem;
+}
+
+/* Reduced-motion fallback: no GSAP pin, so the row scrolls natively */
+.section[data-motion="reduced"] {
+  height: auto;
+}
+
+.section[data-motion="reduced"] .scrollContainer {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section[data-motion="reduced"] .card {
+  scroll-snap-align: start;
+}
+
+/* =========================================================
+   DESKTOP (HORIZONTAL SCROLL)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .section {
+    height: 100vh;
+    justify-content: flex-start;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: flex-end;
+    padding-bottom: 2rem;
+  }
+
+  .scrollContainer {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    width: max-content;
+    /* Allocate exact height below the header without overlaps */
+    height: calc(100vh - 160px);
+    margin-top: auto;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    width: 40vw;
+    max-width: 540px;
+    height: 100%;
+    margin-left: clamp(3rem, 7vw, 6rem);
+    justify-content: space-between;
+  }
+
+  .imageMask {
+    height: calc(100% - 85px);
+    aspect-ratio: unset;
+  }
+
+  .image {
+    width: 125% !important;
+    left: -12.5% !important;
+  }
+
+  .endCta {
+    width: 28vw;
+    height: 100%;
+    margin-left: 5rem;
+    padding: 0 5rem 0 0;
+  }
+}
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2.2rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--background);
+  background-color: var(--foreground);
+  border: 1px solid var(--foreground);
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ctaButton:hover {
+  background-color: transparent;
+  color: var(--foreground);
+  border-color: var(--brass);
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}

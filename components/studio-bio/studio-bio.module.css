@@ -1,0 +1,5 @@
+/* Sets the initial state of the image mask so it is hidden before JS/GSAP kicks in */
+.imageMask {
+  clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  will-change: transform, clip-path;
+}

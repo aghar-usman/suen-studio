@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* SU.EN STUDIO — Warm Architectural Theme */
+  --background: #F7F5F0; /* Bone / warm architectural white */
+  --foreground: #100F0B; /* Deep warm ink */
+
+  --accent: #5F6254;     /* Muted olive — restrained studio accent */
+  --muted: #6F6B63;      /* Warm gray — secondary text */
+  --line: #C9C3B8;       /* Stone — borders and structural lines */
+
+  /* Supporting palette */
+  --surface: #EDE9E1;    /* Limestone — alternate sections */
+  --surface-dark: #292824; /* Charcoal — dark surfaces */
+  --brass: #A58A5B;      /* Brushed brass — very subtle highlight */
+}
+
+.dark {
+  /* SU.EN STUDIO — Dark Architectural Theme */
+  --background: #100F0B; /* Deep warm ink */
+  --foreground: #F7F5F0; /* Bone / warm white */
+
+  --accent: #8A8D7D;     /* Soft muted olive for dark mode */
+  --muted: #A6A198;      /* Warm gray */
+  --line: #393731;       /* Dark stone */
+
+  /* Supporting palette */
+  --surface: #292824;    /* Charcoal */
+  --surface-dark: #100F0B;
+  --brass: #B39A6B;      /* Muted brass */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-surface: var(--surface);
+  --color-surface-dark: var(--surface-dark);
+  --color-brass: var(--brass);
+
+  /* Fixed colors for specific absolute overlays */
+  --color-ink: #100F0B;
+  --color-bone: #F7F5F0;
+  --color-stone: #C9C3B8;
+  --color-charcoal: #292824;
+
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-space-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
 }
