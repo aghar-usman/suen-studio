@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SU·EN Studio
+
+Portfolio website for SU·EN Studio, an architecture and interiors practice based in Kerala and Bangalore.
+
+> **Status:** Work in progress.
+
+## Features
+
+- Scroll-driven intro with the studio's six principles: Light, Form, Context, Flow, Tactility, Void
+- Hero, studio bio and animated stats
+- "The Process" section (six phases from site visit to interiors)
+- Featured projects carousel
+- Projects archive (`/projects`) and project detail pages (`/projects/[slug]`) with galleries
+- Contact page with inquiry form
+- Light and dark theme
+- Loading state and page transitions
+
+## Tech Stack
+
+- Next.js (App Router) and React
+- TypeScript
+- CSS Modules and global CSS
+- GSAP and Framer Motion
+- Google Fonts via `next/font` (Syne, Inter, Space Mono, Fraunces)
+- Deployed on Vercel
 
 ## Getting Started
 
-First, run the development server:
+Requires Node.js 20.9 or newer.
 
 ```bash
+git clone https://github.com/aghar-usman/suen-studio.git
+cd suen-studio
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm start` | Run the production build |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+### Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+If the contact form needs API keys, add them to `.env.local` (do not commit it). See `lib/contact.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/            Routes: home, /projects, /projects/[slug], /contact
+components/     Hero, studio bio, process, featured projects, archive, gallery, nav, footer
+lib/            Project data, contact logic, theme hook
+public/images/  Logos and project images (public/images/projects/<slug>/)
+```
 
-## Deploy on Vercel
+## Adding a Project
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Add images to `public/images/projects/<slug>/` (`cover.jpg`, then `01.jpg`, `02.jpg`, ...).
+2. Add an entry to `lib/projects-data.ts`. The slug becomes the URL `/projects/<slug>`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Work in Progress
+
+- Images missing for Caper Residence, Box House, Gokulam Residence and Casa Dhalaan
+- Footer Instagram link is a placeholder
+- Contact form delivery to be verified in production
+- SEO, accessibility and image optimisation still to do
+
+## License
+
+© 2026 SU·EN Studio. All rights reserved.
