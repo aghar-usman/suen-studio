@@ -3,3 +3,74 @@
   clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
   will-change: transform, clip-path;
 }
+
+/* Small red dot before "Est." — echoes the two dots in the logo mark,
+   used consistently with the same treatment in the hero section. */
+.estLabel::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.55em;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  vertical-align: middle;
+}
+
+/* Marks the origin point of the metrics hairline with a tiny red dot,
+   like a pin where the line begins scaling in from. */
+.metricsLineDot {
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Quirky hover accent on each stat — the numeral's underline tints to
+   the logo red instead of the usual accent color, a small surprise
+   on interaction rather than a static addition. */
+.statItem {
+  position: relative;
+}
+
+.statItem::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.4rem;
+  height: 2px;
+  width: 0;
+  background: var(--logo-red);
+  transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.statItem:hover::after {
+  width: 2rem;
+}
+
+/* Replaces the trailing "." after "SU·EN" with a true, perfectly
+   circular red dot — echoing the logo's own two dots. Sized in em
+   units so it scales cleanly with the heading across breakpoints,
+   and nudged to sit on the baseline the way a period would. */
+.wordmarkDot {
+  display: inline-block;
+  width: 0.16em;
+  height: 0.16em;
+  margin-left: 0.06em;
+  border-radius: 50%;
+  background: var(--logo-red);
+  vertical-align: baseline;
+  transform: translateY(-0.04em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statItem::after {
+    transition: none;
+  }
+}

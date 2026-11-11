@@ -22,6 +22,61 @@
   pointer-events: auto;
 }
 
+/* Small red dot before the "02 / Portfolio" eyebrow label — same
+   treatment as "Est." in the hero and studio-bio sections, echoing
+   the two dots in the logo mark. */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 0.6em;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  vertical-align: middle;
+}
+
+/* Marks the origin point of the progress bar track with a tiny red
+   dot, like a pin where the scrub bar begins filling from. */
+.progressTrack {
+  position: relative;
+}
+
+.progressDot {
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Quiet "selected" indicator that fades in on card hover, next to
+   the project id — a small interactive surprise rather than a
+   static addition. */
+.cardIdDot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-left: 0.5em;
+  border-radius: 50%;
+  background: var(--logo-red);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  vertical-align: middle;
+}
+
+.card:hover .cardIdDot {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .scrollContainer {
   display: flex;
   flex-direction: column;
@@ -43,10 +98,11 @@
   gap: 1.25rem;
   width: 100%;
   cursor: pointer;
+  will-change: transform, opacity, filter;
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--accent);
   outline-offset: 6px;
 }
 
@@ -56,6 +112,25 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background-color: var(--line);
+  transition: transform 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Instant confirmation on press — the hover desaturate/scale on .image
+   only resolves on release, so touch users got no feedback at all
+   until the tap completed. */
+.card:active .imageMask {
+  transform: scale(0.985);
+}
+
+/* 
+  Parallax Wrapper Fix: 
+  On mobile (vertical scroll), we need vertical padding (top/bottom). 
+  We set it to -50px so it can move up and down without exposing the edges.
+*/
+.imageParallaxWrapper {
+  position: absolute;
+  inset: -50px 0; 
+  will-change: transform;
 }
 
 .image {
@@ -94,7 +169,7 @@
 }
 
 .card:hover .metaContainer {
-  border-color: var(--brass);
+  border-color: var(--accent);
 }
 
 .endCta {
@@ -104,9 +179,10 @@
   justify-content: center;
   text-align: center;
   padding: 3rem 1.5rem 1rem;
+  will-change: transform, opacity;
 }
 
-/* Reduced-motion fallback: no GSAP pin, so the row scrolls natively */
+/* Reduced-motion fallback */
 .section[data-motion="reduced"] {
   height: auto;
 }
@@ -114,7 +190,6 @@
 .section[data-motion="reduced"] .scrollContainer {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
 }
 
 .section[data-motion="reduced"] .card {
@@ -143,7 +218,6 @@
     gap: 0;
     padding: 0;
     width: max-content;
-    /* Allocate exact height below the header without overlaps */
     height: calc(100vh - 160px);
     margin-top: auto;
     margin-bottom: 2rem;
@@ -162,9 +236,12 @@
     aspect-ratio: unset;
   }
 
-  .image {
-    width: 125% !important;
-    left: -12.5% !important;
+  /* 
+    Desktop Parallax Fix: 
+    Switch to horizontal buffer so the image can slide left/right on X axis.
+  */
+  .imageParallaxWrapper {
+    inset: 0 -160px;
   }
 
   .endCta {
@@ -199,10 +276,15 @@
 .ctaButton:hover {
   background-color: transparent;
   color: var(--foreground);
-  border-color: var(--brass);
+  border-color: var(--accent);
+}
+
+.ctaButton:active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
 }
 
 .ctaButton:focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }

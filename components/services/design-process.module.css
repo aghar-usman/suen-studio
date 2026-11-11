@@ -1,0 +1,105 @@
+/* design-process.module.css */
+
+/* ============================
+   Mobile / tablet rail
+   ============================ */
+.datumLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), var(--line) 85%);
+  transform-origin: top center;
+  transform: scaleY(0);
+  will-change: transform;
+}
+
+.node {
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  background: var(--background);
+  transform: translateX(-50%) scale(0.8);
+  will-change: transform, background-color;
+}
+
+/* ============================
+   Desktop sticky index panel
+   ============================ */
+.blueprintPanel {
+  position: relative;
+  padding: 2rem 1.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+@media (min-width: 1280px) {
+  .blueprintPanel {
+    padding: 2.5rem 2rem;
+  }
+}
+
+/* Faint blueprint grid — restrained, low-opacity texture behind the
+   numeral, echoing a drafting sheet without competing with the content. */
+.blueprintPanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.tick {
+  height: 2px;
+  width: 24px;
+  background: var(--line);
+  transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.tick[data-active="true"] {
+  width: 48px;
+  background: var(--accent);
+}
+
+/* ============================
+   Row focus state (desktop only)
+   ============================ */
+.rowContent {
+  opacity: 0.45;
+  transition: opacity 0.6s ease;
+}
+
+.rowContent[data-active="true"] {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .rowContent {
+    opacity: 1; /* no dimming on the single-column mobile/tablet list */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datumLine {
+    transform: scaleY(1);
+  }
+  .node {
+    transform: translateX(-50%) scale(1);
+    background: var(--accent);
+  }
+  .rowContent {
+    opacity: 1;
+  }
+  .tick[data-active="false"] {
+    background: var(--line);
+  }
+}

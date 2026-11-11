@@ -1,33 +1,44 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   /* SU.EN STUDIO — Warm Architectural Theme */
-  --background: #F7F5F0; /* Bone / warm architectural white */
-  --foreground: #100F0B; /* Deep warm ink */
+  --background: #FFFFFF; /* Changed from #F7F5F0 to match the solid white logo background */
+  --foreground: #100F0B; 
 
-  --accent: #5F6254;     /* Muted olive — restrained studio accent */
-  --muted: #6F6B63;      /* Warm gray — secondary text */
-  --line: #C9C3B8;       /* Stone — borders and structural lines */
+  --accent: #5F6254;     
+  --muted: #6F6B63;      
+  --line: #C9C3B8;       
 
   /* Supporting palette */
-  --surface: #EDE9E1;    /* Limestone — alternate sections */
-  --surface-dark: #292824; /* Charcoal — dark surfaces */
-  --brass: #A58A5B;      /* Brushed brass — very subtle highlight */
+  --surface: #EDE9E1;    
+  --surface-dark: #292824; 
+  --brass: #A58A5B;
+
+  /* Logo signature color — matches the red dots in the monogram mark.
+     Reserved for the logo itself and rare, deliberate accents only
+     (e.g. a status dot or "new" indicator). Not used for general UI
+     accents like buttons/links — --accent handles those. */
+  --logo-red: #E30613;
 }
 
 .dark {
   /* SU.EN STUDIO — Dark Architectural Theme */
-  --background: #100F0B; /* Deep warm ink */
-  --foreground: #F7F5F0; /* Bone / warm white */
+  --background: #100F0B; 
+  --foreground: #F7F5F0; 
 
-  --accent: #8A8D7D;     /* Soft muted olive for dark mode */
-  --muted: #A6A198;      /* Warm gray */
-  --line: #393731;       /* Dark stone */
+  --accent: #8A8D7D;     
+  --muted: #A6A198;      
+  --line: #393731;       
 
   /* Supporting palette */
-  --surface: #292824;    /* Charcoal */
+  --surface: #292824;    
   --surface-dark: #100F0B;
-  --brass: #B39A6B;      /* Muted brass */
+  --brass: #B39A6B;
+
+  /* Logo red stays constant across themes — it's a fixed brand mark
+     color, not a UI token that should shift with light/dark mode. */
+  --logo-red: #E30613;
 }
 
 @theme inline {
@@ -40,6 +51,7 @@
   --color-surface: var(--surface);
   --color-surface-dark: var(--surface-dark);
   --color-brass: var(--brass);
+  --color-logo-red: var(--logo-red);
 
   /* Fixed colors for specific absolute overlays */
   --color-ink: #100F0B;
@@ -47,9 +59,14 @@
   --color-stone: #C9C3B8;
   --color-charcoal: #292824;
 
-  --font-display: var(--font-playfair);
+  /* THE AVANT-GARDE FONT MAPPINGS */
+  --font-display: var(--font-syne);
   --font-body: var(--font-inter);
   --font-mono: var(--font-space-mono);
+
+  /* EDITORIAL SERIF — restrained alternative for hero-scale headlines only.
+     Not used site-wide; point a heading at this specifically to try it. */
+  --font-serif: var(--font-fraunces);
 }
 
 body {

@@ -1,18 +1,15 @@
 .heroWrap {
   position: relative;
   /* GSAP pins this wrapper and uses the additional height as the scroll distance. */
-  height: 200vh;
+  height: 200dvh;
   background-color: var(--background);
   color: var(--foreground);
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Reduced motion: skip the scroll-jack entirely. No extra pin distance,
-   and the decorative slats/scroll-cue are dropped so the real heading
-   and CTA (already set to their final visible state in JS) aren't left
-   hidden underneath a frozen, un-flippable puzzle of panels. */
+/* Reduced motion: skip the scroll-jack entirely. */
 .heroWrap[data-motion="reduced"] {
-  height: 100vh;
+  height: 100dvh;
 }
 
 .heroWrap[data-motion="reduced"] .slatsContainer,
@@ -27,7 +24,7 @@
 .hero {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--background);
   display: flex;
@@ -93,13 +90,9 @@
   inset: 0;
   transform-style: preserve-3d;
   transform-origin: center center;
-  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover logic: Only flips if the user has not started scrolling — and
-   only on devices that actually have hover (a tap on touchscreens would
-   otherwise "stick" the flip on since there's no pointer to un-hover
-   with), and only if the user hasn't asked for reduced motion. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .heroWrap:not(.isScrolling) .slat:hover .hoverFlip {
     transform: rotateY(180deg) translateZ(-30px);
@@ -138,18 +131,19 @@
   height: calc(100% - 40px);
   left: calc(var(--i) * -100%);
   background-color: transparent;
-  background-image: url("/images/Logo.png");
+  background-image: url("/images/Logo-light.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center center;
   opacity: 0.95;
   pointer-events: none;
-  transition: filter 0.5s ease;
 }
 
-/* Dark mode logo */
+/* Dark mode — swap to the dedicated dark-variant asset instead of
+   filtering, so the logo's red dots stay true red instead of
+   inverting to cyan. */
 :global(.dark) .frontImg {
-  filter: invert(1);
+  background-image: url("/images/Logo-dark.png");
 }
 
 /* =========================================================
@@ -215,9 +209,11 @@
    ========================================================= */
 
 .word {
-  font-family: var(--font-display), serif;
-  font-weight: 500;
-  font-style: italic;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
   font-size: clamp(1.1rem, 2.4vw, 1.9rem);
   color: var(--foreground);
   transition: color 0.5s ease;
@@ -244,6 +240,20 @@
   transition: color 0.5s ease;
 }
 
+/* Small red dot after each panel's numeral, echoing the two dots
+   in the logo mark itself — a quiet callback to the brand on the
+   back face of every slat. */
+.num::after {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  vertical-align: middle;
+}
+
 /* =========================================================
    WELCOME SCREEN
    ========================================================= */
@@ -261,7 +271,8 @@
   justify-content: center;
   background: var(--background);
   text-align: center;
-  padding: clamp(1.5rem, 4vw, 4rem);
+  /* Scales top/bottom padding dynamically if the screen is short */
+  padding: clamp(1rem, 3vh, 3rem) clamp(1.5rem, 4vw, 4rem);
   transition: background-color 0.5s ease;
 }
 
@@ -270,15 +281,30 @@
    ========================================================= */
 
 .wMark {
-  width: clamp(90px, 12vw, 180px);
-  height: auto;
-  margin-bottom: 1.2rem;
+  /* Increased maximum size from 220px to 280px */
+  width: clamp(100px, min(18vw, 18vh), 280px);
+  height: clamp(100px, min(18vw, 18vh), 280px);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  margin-bottom: clamp(0.5rem, 2vh, 1.5rem);
   will-change: transform, opacity;
-  transition: filter 0.5s ease;
 }
 
-:global(.dark) .wMark {
-  filter: invert(1);
+.wMarkLight {
+  display: block;
+  mix-blend-mode: multiply;
+}
+
+.wMarkDark {
+  display: none;
+}
+
+:global(.dark) .wMarkLight {
+  display: none;
+}
+
+:global(.dark) .wMarkDark {
+  display: block;
 }
 
 /* =========================================================
@@ -291,9 +317,23 @@
   letter-spacing: 0.25em;
   color: var(--accent);
   text-transform: uppercase;
-  margin-bottom: 1.2rem;
+  margin-bottom: clamp(0.5rem, 1.5vh, 1.2rem);
   will-change: transform, opacity;
   transition: color 0.5s ease;
+}
+
+/* Small red dot before "Est." — a quiet nod to the two dots in the
+   logo mark, standing in almost like punctuation. */
+.est::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.55em;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--logo-red);
+  vertical-align: middle;
 }
 
 /* =========================================================
@@ -301,18 +341,26 @@
    ========================================================= */
 
 .punchline {
-  font-family: var(--font-display), serif;
-  font-weight: 400;
-  font-size: clamp(1.75rem, 4.5vw, 4.5rem);
-  line-height: 1.15;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  text-transform: uppercase;
+  /* Negative tracking at display scale — letters read too far apart
+     as size grows, unlike the small mono labels elsewhere on this
+     page which correctly use small positive tracking. */
+  letter-spacing: -0.015em;
+  /* Increased maximum font size from 4.75rem to 5.5rem */
+  font-size: clamp(1.75rem, min(5.5vw, 6.5vh), 5.5rem);
+  line-height: 1.12;
   color: var(--foreground);
   max-width: 22ch;
-  margin-bottom: 1.2rem;
+  margin-bottom: clamp(0.5rem, 2vh, 1.2rem);
   will-change: transform, opacity;
   transition: color 0.5s ease;
 }
 
 .punchline em {
+  font-style: normal;
   color: var(--accent);
 }
 
@@ -322,11 +370,12 @@
 
 .sub {
   font-family: var(--font-mono), monospace;
-  font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+  /* Increased maximum font size from 0.7rem to 0.8rem */
+  font-size: clamp(0.6rem, 1.5vw, 0.8rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 3vh, 2rem);
   will-change: transform, opacity;
   transition: color 0.5s ease;
 }
@@ -339,9 +388,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.85rem 2rem;
+  /* Increased button padding */
+  padding: 1rem 2.25rem;
+  margin-top: clamp(0.2rem, 1.5vh, 1rem);
   font-family: var(--font-mono), monospace;
-  font-size: 0.7rem;
+  /* Increased button text size */
+  font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--background);
@@ -355,12 +407,21 @@
   text-decoration: none;
   cursor: pointer;
   will-change: transform, opacity;
+  position: relative;
+  z-index: 50;
 }
 
 .ctaButton:hover {
   background-color: transparent;
   color: var(--foreground);
   border-color: var(--accent);
+}
+
+/* Instant feedback on press, not on release — the moment lag
+   appears here the button stops feeling directly touchable. */
+.ctaButton:active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
 }
 
 .ctaButton:focus-visible {
@@ -392,32 +453,51 @@
   gap: 0.55rem;
   opacity: 1;
   pointer-events: none;
-  transition: opacity 0.5s ease;
-  padding: 0.6rem 1.1rem 0.6rem 1.2rem;
+  transition: opacity 0.5s ease, background-color 0.5s ease, border-color 0.5s ease;
+  padding: 0.6rem 1.15rem 0.6rem 1.25rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--background) 78%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: var(--foreground);
+  border: 1px solid var(--foreground);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--foreground) 25%, transparent);
 }
 
-/* Fade out the indicator immediately when the user begins scrolling */
-.isScrolling .scrollGuide {
-  opacity: 0;
+/* Small pulsing red dot before "Scroll" — a quiet "live" indicator,
+   echoing the logo's dots while giving the guide a bit of personality. */
+.scrollDot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--logo-red);
+  animation: scrollDotPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollDotPulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .scrollText {
   font-family: var(--font-mono), monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.25em;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--background);
+  transition: color 0.5s ease;
 }
 
 .scrollArrow {
   width: 13px;
   height: 13px;
-  color: var(--accent);
+  color: var(--background);
+  transition: color 0.5s ease;
   animation: scrollArrowNudge 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
@@ -436,15 +516,77 @@
   .scrollArrow {
     animation: none;
   }
+
+  .scrollDot {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* =========================================================
-   MOBILE
+   MOBILE LAYOUT FIXES
    ========================================================= */
 
 @media (max-width: 768px) {
-  /* Disable the desktop-style cursor on touch-sized layouts. */
+  /* Convert vertical columns to horizontal rows on mobile */
+  .slatsContainer {
+    flex-direction: column;
+  }
+
   .slat {
+    width: 100%;
     cursor: default;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .slat:last-child {
+    border-bottom: none;
+  }
+
+  /* Scale the image mask correctly for vertical slicing */
+  .frontImg {
+    width: calc(100% - 40px);
+    height: calc(600% - 40px);
+    left: 20px;
+    top: calc((var(--i) * -100%) + 20px);
+    bottom: auto;
+  }
+
+  /* Re-align front panel index */
+  .idx {
+    top: 50%;
+    left: 1.5rem;
+    transform: translateY(-50%);
+    font-size: 0.55rem;
+  }
+
+  /* Layout back panel text horizontally side-by-side */
+  .backLayer {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .num {
+    position: static;
+    margin-top: 0;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  .word {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .cap {
+    margin-top: 0;
+    font-size: 0.55rem;
+    max-width: none;
+    flex: 1; /* Allows caption to cleanly wrap and take remaining width */
   }
 }

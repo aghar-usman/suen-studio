@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import ThemeToggle from "./theme-toggle";
 
 const STAGGER = 0.035;
@@ -13,10 +13,13 @@ const TextRoll: React.FC<{
   className?: string;
   center?: boolean;
 }> = ({ children, className = "", center = false }) => {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.span
       initial="initial"
       whileHover="hovered"
+      whileTap={{ scale: shouldReduceMotion ? 1 : 0.96 }}
       className={`relative block overflow-hidden ${className}`}
       style={{
         lineHeight: 0.8,
@@ -24,7 +27,9 @@ const TextRoll: React.FC<{
     >
       <div>
         {children.split("").map((l, i) => {
-          const delay = center
+          const delay = shouldReduceMotion
+            ? 0
+            : center
             ? STAGGER * Math.abs(i - (children.length - 1) / 2)
             : STAGGER * i;
 
@@ -34,7 +39,11 @@ const TextRoll: React.FC<{
                 initial: { y: 0 },
                 hovered: { y: "-100%" },
               }}
-              transition={{ ease: "easeInOut", delay }}
+              transition={{
+                ease: "easeInOut",
+                delay,
+                duration: shouldReduceMotion ? 0 : undefined,
+              }}
               className="inline-block"
               key={i}
             >
@@ -46,7 +55,9 @@ const TextRoll: React.FC<{
 
       <div className="absolute inset-0">
         {children.split("").map((l, i) => {
-          const delay = center
+          const delay = shouldReduceMotion
+            ? 0
+            : center
             ? STAGGER * Math.abs(i - (children.length - 1) / 2)
             : STAGGER * i;
 
@@ -56,7 +67,11 @@ const TextRoll: React.FC<{
                 initial: { y: "100%" },
                 hovered: { y: 0 },
               }}
-              transition={{ ease: "easeInOut", delay }}
+              transition={{
+                ease: "easeInOut",
+                delay,
+                duration: shouldReduceMotion ? 0 : undefined,
+              }}
               className="inline-block"
               key={i}
             >
@@ -79,11 +94,8 @@ export default function Nav() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Don't hide navbar if sidebar menu is open
       if (isOpen) return;
 
-      // Hide while scrolling down past 50px
-      // Show while scrolling up
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
         setIsVisible(false);
       } else {
@@ -97,8 +109,7 @@ export default function Nav() {
       passive: true,
     });
 
-    return () =>
-      window.removeEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY, isOpen]);
 
   // Lock body scroll when sidebar is open
@@ -121,10 +132,8 @@ export default function Nav() {
           ===================================================== */}
 
       <nav
-        className={`fixed top-0 inset-x-0 z-40 flex items-center justify-between border-b border-line px-6 py-4 bg-background/90 backdrop-blur-md transition-transform duration-300 ease-in-out ${
-          isVisible
-            ? "translate-y-0"
-            : "-translate-y-full"
+        className={`fixed top-0 inset-x-0 z-40 flex items-center justify-between border-b border-line px-6 py-4 bg-background/90 backdrop-blur-md transition-transform duration-300 ease-in-out motion-reduce:transition-none ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         {/* Logo */}
@@ -134,16 +143,35 @@ export default function Nav() {
           aria-label="SU·EN Studio — Home"
         >
           <Image
-            src="/images/Logo.png"
+            src="/images/Logo-light.png"
             alt="SU·EN Studio"
             width={120}
-            height={80}
+            height={120}
             priority
             className="
               h-10
               w-auto
               object-contain
-              transition-opacity
+              block
+              dark:hidden
+              transition-all
+              duration-300
+              group-hover:opacity-70
+            "
+          />
+          <Image
+            src="/images/Logo-dark.png"
+            alt="SU·EN Studio"
+            width={120}
+            height={120}
+            priority
+            className="
+              h-10
+              w-auto
+              object-contain
+              hidden
+              dark:block
+              transition-all
               duration-300
               group-hover:opacity-70
             "
@@ -165,8 +193,15 @@ export default function Nav() {
               tracking-widest
               text-foreground
               hover:text-accent
-              transition-colors
-              focus:outline-none
+              active:scale-90
+              transition-all
+              duration-150
+              outline-none
+              focus-visible:outline
+              focus-visible:outline-2
+              focus-visible:outline-accent
+              focus-visible:outline-offset-4
+              rounded-sm
             "
             aria-label="Open navigation menu"
             aria-expanded={isOpen}
@@ -189,6 +224,7 @@ export default function Nav() {
             bg-background/50
             backdrop-blur-sm
             transition-opacity
+            motion-reduce:transition-none
           "
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
@@ -216,19 +252,23 @@ export default function Nav() {
           transition-transform
           duration-500
           ease-[cubic-bezier(0.76,0,0.24,1)]
+          motion-reduce:transition-none
           flex
           flex-col
-          ${
-            isOpen
-              ? "translate-x-0"
-              : "translate-x-full"
-          }
+          ${isOpen ? "translate-x-0" : "translate-x-full"}
         `}
         aria-hidden={!isOpen}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-line">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted">
+          <span className="font-mono text-xs uppercase tracking-widest text-muted inline-flex items-center gap-2">
+            {/* Small red dot before "Navigation" — echoes the two dots
+                in the logo mark, matching the eyebrow-label treatment
+                used across the hero, studio-bio, and archive sections. */}
+            <span
+              className="w-1 h-1 rounded-full bg-[var(--logo-red)] shrink-0"
+              aria-hidden="true"
+            />
             Navigation
           </span>
 
@@ -239,10 +279,17 @@ export default function Nav() {
               -mr-2
               text-foreground
               hover:text-accent
+              active:scale-90
               transition-all
               duration-300
+              motion-reduce:transition-none
               hover:rotate-90
-              focus:outline-none
+              outline-none
+              focus-visible:outline
+              focus-visible:outline-2
+              focus-visible:outline-accent
+              focus-visible:outline-offset-4
+              rounded-sm
             "
             aria-label="Close menu"
           >
@@ -255,18 +302,8 @@ export default function Nav() {
               strokeWidth="1.5"
               aria-hidden="true"
             >
-              <line
-                x1="18"
-                y1="6"
-                x2="6"
-                y2="18"
-              />
-              <line
-                x1="6"
-                y1="6"
-                x2="18"
-                y2="18"
-              />
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
@@ -276,9 +313,15 @@ export default function Nav() {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="w-fit"
+            className="group flex items-center gap-3 w-fit"
           >
-            <TextRoll className="font-display text-4xl text-foreground hover:text-accent transition-colors duration-300 pb-1">
+            {/* Quiet red dot that fades and scales in on hover — same
+                interactive echo used on the footer's nav links. */}
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-[var(--logo-red)] opacity-0 scale-50 transition-all duration-300 motion-reduce:transition-none group-hover:opacity-100 group-hover:scale-100 shrink-0"
+              aria-hidden="true"
+            />
+            <TextRoll className="font-display text-4xl tracking-tight text-foreground hover:text-accent transition-colors duration-300 pb-1">
               Home
             </TextRoll>
           </Link>
@@ -286,19 +329,27 @@ export default function Nav() {
           <Link
             href="/projects"
             onClick={() => setIsOpen(false)}
-            className="w-fit"
+            className="group flex items-center gap-3 w-fit"
           >
-            <TextRoll className="font-display text-4xl text-foreground hover:text-accent transition-colors duration-300 pb-1">
-              Projects
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-[var(--logo-red)] opacity-0 scale-50 transition-all duration-300 motion-reduce:transition-none group-hover:opacity-100 group-hover:scale-100 shrink-0"
+              aria-hidden="true"
+            />
+            <TextRoll className="font-display text-4xl tracking-tight text-foreground hover:text-accent transition-colors duration-300 pb-1">
+              Work
             </TextRoll>
           </Link>
 
           <Link
             href="/contact"
             onClick={() => setIsOpen(false)}
-            className="w-fit"
+            className="group flex items-center gap-3 w-fit"
           >
-            <TextRoll className="font-display text-4xl text-foreground hover:text-accent transition-colors duration-300 pb-1">
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-[var(--logo-red)] opacity-0 scale-50 transition-all duration-300 motion-reduce:transition-none group-hover:opacity-100 group-hover:scale-100 shrink-0"
+              aria-hidden="true"
+            />
+            <TextRoll className="font-display text-4xl tracking-tight text-foreground hover:text-accent transition-colors duration-300 pb-1">
               Contact
             </TextRoll>
           </Link>
