@@ -1,105 +1,82 @@
-/* design-process.module.css */
-
-/* ============================
-   Mobile / tablet rail
-   ============================ */
-.datumLine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, var(--accent), var(--line) 85%);
-  transform-origin: top center;
-  transform: scaleY(0);
-  will-change: transform;
-}
-
-.node {
-  position: absolute;
-  left: 0;
-  top: 0.3rem;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  border: 1px solid var(--line);
-  background: var(--background);
-  transform: translateX(-50%) scale(0.8);
-  will-change: transform, background-color;
-}
-
-/* ============================
-   Desktop sticky index panel
-   ============================ */
-.blueprintPanel {
+.section {
+  --services-gutter: clamp(24px, 5.55vw, 80px);
+  --services-ease: cubic-bezier(.2, .8, .2, 1);
   position: relative;
-  padding: 2rem 1.75rem;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  overflow: hidden;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: 96px var(--services-gutter) 64px;
+  background: var(--background);
+  color: var(--foreground);
+  scroll-margin-top: 80px;
 }
 
-@media (min-width: 1280px) {
-  .blueprintPanel {
-    padding: 2.5rem 2rem;
-  }
+.wrap { width: 100%; max-width: 1440px; margin-inline: auto; }
+.eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; font-family: var(--font-body), Arial, sans-serif; font-size: 13px; line-height: 1.5; }
+.dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--logo-red); }
+
+.header { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 4.4vw, 72px); align-items: start; }
+.heading { margin: 0; font-family: var(--font-display), sans-serif; font-size: clamp(42px, 4.65vw, 68px); font-weight: 400; line-height: 1.04; letter-spacing: -.055em; }
+.heading > span { display: block; }
+.fullStop { color: var(--logo-red); letter-spacing: 0; }
+.introduction { max-width: 39ch; padding-top: 4px; font-family: var(--font-body), Arial, sans-serif; font-size: 16px; line-height: 1.7; }
+.introduction > p { margin: 0 0 12px; }
+
+.contactLink { display: inline-flex; align-items: center; gap: 28px; min-height: 48px; color: var(--foreground); font-size: 14px; line-height: 1.4; font-weight: 500; text-decoration: none; transition: color 120ms var(--services-ease); }
+.contactLink > span { position: relative; }
+.contactLink > span::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: currentColor; transform: scaleX(.32); transform-origin: left; transition: transform 150ms var(--services-ease); }
+.contactLink svg { width: 20px; height: 20px; flex-shrink: 0; transition: transform 150ms var(--services-ease); }
+.contactLink:focus-visible { outline: 2px solid var(--action, var(--accent)); outline-offset: 6px; }
+.contactLink:focus-visible > span::after { transform: scaleX(1); transition: none; }
+.contactLink:active { color: var(--action, var(--accent)); }
+
+.services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 4.4vw, 72px); margin-top: 40px; }
+.service { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 20px; align-content: start; padding-top: 24px; border-top: 1px solid var(--line); }
+.number { padding-top: 5px; font-family: var(--font-mono), monospace; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.serviceTitle { margin: 0; font-family: var(--font-display), sans-serif; font-size: 24px; line-height: 1.2; font-weight: 400; letter-spacing: -.03em; }
+.serviceDescription { max-width: 46ch; margin: 12px 0 0; font-family: var(--font-body), Arial, sans-serif; font-size: 16px; line-height: 1.65; }
+
+.detailImage { position: relative; height: clamp(260px, 32svh, 320px); margin-top: 32px; overflow: hidden; background: var(--surface); }
+.image { object-fit: cover; object-position: 50% 48%; }
+
+@media (hover: hover) and (pointer: fine) {
+  .contactLink:hover { color: var(--action, var(--accent)); transition-duration: 150ms; }
+  .contactLink:hover > span::after { transform: scaleX(1); }
+  .contactLink:hover svg { transform: translateX(3px); }
 }
 
-/* Faint blueprint grid — restrained, low-opacity texture behind the
-   numeral, echoing a drafting sheet without competing with the content. */
-.blueprintPanel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 28px 28px;
-  opacity: 0.3;
-  pointer-events: none;
+@media (min-width: 1024px) and (max-height: 780px) {
+  .section { padding-block: 72px 48px; }
+  .heading { font-size: clamp(42px, 4.2vw, 60px); }
+  .services { margin-top: 32px; }
+  .detailImage { height: 240px; }
 }
 
-.tick {
-  height: 2px;
-  width: 24px;
-  background: var(--line);
-  transition: width 0.4s ease, background-color 0.4s ease;
+@media (min-width: 640px) and (max-width: 1023px) {
+  .section { padding-block: 80px 56px; }
+  .heading { font-size: clamp(36px, 4.8vw, 48px); }
+  .header, .services { gap: 32px; }
+  .service { grid-template-columns: 24px minmax(0, 1fr); gap: 12px; }
+  .serviceTitle { font-size: 22px; }
+  .detailImage { height: clamp(300px, 35svh, 420px); }
 }
 
-.tick[data-active="true"] {
-  width: 48px;
-  background: var(--accent);
-}
-
-/* ============================
-   Row focus state (desktop only)
-   ============================ */
-.rowContent {
-  opacity: 0.45;
-  transition: opacity 0.6s ease;
-}
-
-.rowContent[data-active="true"] {
-  opacity: 1;
-}
-
-@media (max-width: 1023px) {
-  .rowContent {
-    opacity: 1; /* no dimming on the single-column mobile/tablet list */
-  }
+@media (max-width: 639px) {
+  .section { padding-block: 64px 48px; }
+  .eyebrow { margin-bottom: 24px; }
+  .header { grid-template-columns: 1fr; gap: 24px; }
+  .heading { font-size: clamp(36px, 9.8vw, 58px); line-height: 1.06; }
+  .introduction { padding-top: 0; max-width: 40ch; }
+  .introduction > p { margin-bottom: 8px; }
+  .services { grid-template-columns: 1fr; gap: 24px; margin-top: 32px; }
+  .service { grid-template-columns: 24px minmax(0, 1fr); gap: 16px; padding-top: 20px; }
+  .serviceTitle { font-size: 24px; }
+  .serviceDescription { margin-top: 12px; }
+  .detailImage { height: auto; aspect-ratio: 4 / 3; margin-top: 32px; }
+  .image { object-position: 44% 50%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .datumLine {
-    transform: scaleY(1);
-  }
-  .node {
-    transform: translateX(-50%) scale(1);
-    background: var(--accent);
-  }
-  .rowContent {
-    opacity: 1;
-  }
-  .tick[data-active="false"] {
-    background: var(--line);
-  }
+  .contactLink, .contactLink > span::after, .contactLink svg { transition: none; }
+  .contactLink:hover svg { transform: none; }
 }
