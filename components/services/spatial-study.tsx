@@ -13,7 +13,7 @@ export default function SpatialStudy() {
   return (
     <div className={styles.study}>
       <div className={styles.topline}><span>Two ways of seeing</span><span aria-live="polite" aria-atomic="true">{elevation ? "02 / Elevation" : "01 / Plan"}</span></div>
-      <svg id={id} className={styles.drawing} viewBox="0 0 640 360" role="img" aria-label={elevation ? "Illustrative front elevation of a courtyard house, with a flat roof, two windows, and a red entrance." : "Illustrative floor plan of a courtyard house, with rooms around a central red courtyard."}>
+      <svg id={id} className={styles.drawing} viewBox="80 12 480 344" role="img" aria-label={elevation ? "Illustrative front elevation of a courtyard house, with a flat roof, two windows, and a red entrance." : "Illustrative floor plan of a courtyard house, with rooms around a central red courtyard."}>
         <g className={styles.guides} fill="none" stroke="currentColor" strokeWidth="1">
           <path d="M80 306H560 M112 38V326 M528 38V326" strokeDasharray="3 7" />
           <path d="M104 54H120 M112 46V62 M520 54H536 M528 46V62" />
@@ -52,3 +52,4 @@ export default function SpatialStudy() {
     </div>
   );
 }
+
