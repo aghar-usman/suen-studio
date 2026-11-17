@@ -1,0 +1,14 @@
+.root { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 240px; padding: 24px; background: #fff; color: #191c1d; }
+.root[data-fullscreen="true"] { position: fixed; inset: 0; z-index: 100; min-height: 100svh; }
+:global(.dark) .root { background: #303030; color: #f5f6f4; }
+.frame { position: relative; width: min(480px, 80vw); aspect-ratio: 4 / 3; overflow: hidden; isolation: isolate; }
+.poster { position: absolute; inset: 0; display: grid; place-items: center; }
+.poster img { width: 120px; height: 120px; object-fit: contain; }
+.lightLogo { display: block; }
+.darkLogo { display: none; }
+:global(.dark) .lightLogo { display: none; }
+:global(.dark) .darkLogo { display: block; }
+.video { position: absolute; top: 0; left: -16.667%; width: 133.334%; max-width: none; height: 100%; object-fit: fill; opacity: 0; pointer-events: none; }
+.ready { opacity: 1; }
+.label { margin-top: 16px; font-family: var(--font-body), Arial, sans-serif; font-size: 14px; line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { .video { display: none; } }
