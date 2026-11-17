@@ -33,8 +33,8 @@ export default function ProjectsArchive() {
     <section className={styles.archive} aria-labelledby="archive-heading">
       <div className={styles.wrap}>
         <header className={styles.header}>
-          <div><p className={styles.eyebrow}><span className={styles.dot} aria-hidden="true" />SU.EN Studio · Work</p><h1 id="archive-heading" className={styles.heading}>Project archive<span className={styles.fullStop}>.</span></h1></div>
-          <p className={styles.introduction}>Homes, interiors, and spaces for business. Find a project by name, place, or year.</p>
+          <div><p className={styles.eyebrow}><span className={styles.dot} aria-hidden="true" />SU.EN Studio · Work</p><h1 id="archive-heading" className={styles.heading}>Places for life<span className={styles.fullStop}>.</span></h1></div>
+          <p className={styles.introduction}>Explore our homes, interiors, and spaces for business. Find a project by name, place, or year.</p>
         </header>
 
         <div className={styles.toolbar}>
@@ -75,4 +75,5 @@ export default function ProjectsArchive() {
     </section>
   );
 }
+
 
