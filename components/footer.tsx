@@ -13,23 +13,12 @@ export default function Footer() {
   function backToTop() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduced ? "instant" : "smooth" });
-    document.querySelector<HTMLAnchorElement>('nav a[href="/"]')?.focus({ preventScroll: true });
+    document.querySelector<HTMLAnchorElement>('header a[href="/"]')?.focus({ preventScroll: true });
   }
 
   return (
     <footer className={styles.footer}>
       <div className={styles.wrap}>
-        <div className={styles.invitation}>
-          <div>
-            <p className={styles.eyebrow}><span className={styles.dot} aria-hidden="true" />Your next project</p>
-            <h2 className={styles.heading}>Start with<br />a conversation<span className={styles.fullStop}>.</span></h2>
-          </div>
-          <div className={styles.invitationAction}>
-            <p>Tell us about your site, your space, or the idea you have in mind.</p>
-            <Link href="/contact" className={styles.primary}>Start a project<Arrow /></Link>
-          </div>
-        </div>
-
         <div className={styles.directory}>
           <div className={styles.brand}>
             <Link href="/" className={styles.logoLink} aria-label="SU.EN Studio home">
@@ -57,10 +46,11 @@ export default function Footer() {
 
         <div className={styles.bottomRow}>
           <p>© {new Date().getFullYear()} SU.EN Studio</p>
-          <div className={styles.credit}><span>Site by</span><a href="https://aghar-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Site by AUKT, opens in a new tab"><span className={styles.creditBadge}><Image src="/images/AUKT.svg" alt="AUKT" width={50} height={16} /></span></a></div>
+          <div className={styles.credit}><span>Site by</span><a href="https://aghar-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Site by AUKT, opens in a new tab">AUKT</a></div>
           <button type="button" onClick={backToTop} className={styles.backToTop}><span>Back to top</span><Arrow up /></button>
         </div>
       </div>
     </footer>
   );
 }
+
