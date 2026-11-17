@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./design-process.module.css";
+import SpatialStudy from "./spatial-study";
 
 const SERVICES = [
   {
@@ -49,16 +50,21 @@ export default function Services() {
           ))}
         </div>
 
+        <div className={styles.visuals}>
         <div className={styles.detailImage}>
           <Image
             src="/images/projects/casa-dhalaan/05.jpg"
             alt="Red and black chairs beside a pale kitchen counter, an interior detail at Casa Dhalaan by SU.EN Studio"
             fill
-            sizes="100vw"
+            sizes="(max-width: 767px) 100vw, 50vw"
             className={styles.image}
           />
+        </div>
+        <SpatialStudy />
         </div>
       </div>
     </section>
   );
 }
+
+
