@@ -40,31 +40,29 @@ export default function Services() {
 
         <div className={styles.services}>
           {SERVICES.map((service) => (
-            <article key={service.number} className={styles.service}>
-              <span className={styles.number} aria-hidden="true">{service.number}</span>
-              <div>
-                <h3 className={styles.serviceTitle}>{service.title}</h3>
-                <p className={styles.serviceDescription}>{service.description}</p>
-              </div>
-            </article>
+            <div key={service.number} className={styles.serviceColumn}>
+              <article className={styles.service}>
+                <span className={styles.number} aria-hidden="true">{service.number}</span>
+                <div>
+                  <h3 className={styles.serviceTitle}>{service.title}</h3>
+                  <p className={styles.serviceDescription}>{service.description}</p>
+                </div>
+              </article>
+              {service.number === "01" ? <SpatialStudy /> : (
+                <div className={styles.detailImage}>
+                  <Image
+                    src="/images/projects/casa-dhalaan/05.jpg"
+                    alt="Red and black chairs beside a pale kitchen counter, an interior detail at Casa Dhalaan by SU.EN Studio"
+                    fill
+                    sizes="(max-width: 639px) 100vw, 50vw"
+                    className={styles.image}
+                  />
+                </div>
+              )}
+            </div>
           ))}
-        </div>
-
-        <div className={styles.visuals}>
-        <div className={styles.detailImage}>
-          <Image
-            src="/images/projects/casa-dhalaan/05.jpg"
-            alt="Red and black chairs beside a pale kitchen counter, an interior detail at Casa Dhalaan by SU.EN Studio"
-            fill
-            sizes="(max-width: 767px) 100vw, 50vw"
-            className={styles.image}
-          />
-        </div>
-        <SpatialStudy />
         </div>
       </div>
     </section>
   );
 }
-
-
