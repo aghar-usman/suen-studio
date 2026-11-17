@@ -2,49 +2,65 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* SU.EN STUDIO — Warm Architectural Theme */
-  --background: #FFFFFF; /* Changed from #F7F5F0 to match the solid white logo background */
-  --foreground: #100F0B; 
+  color-scheme: light;
+  --action: #B82929;
+  --selection-background: #F7DDDB;
+  --selection-foreground: #191C1D;
+  --m-in: 150ms;
+  --m-out: 120ms;
+  --m-press: 90ms;
+  --m-image: 600ms;
+  --m-image-out: 400ms;
+  --m-ease: cubic-bezier(.2, .8, .2, 1);
+  --m-ease-enter: cubic-bezier(.22, 1, .36, 1);
+  /* SU.EN STUDIO — White / Graphite Architectural Theme */
+  --background: #FFFFFF; 
+  --foreground: #191C1D; 
 
-  --accent: #5F6254;     
-  --muted: #6F6B63;      
-  --line: #C9C3B8;       
+  --accent: #454C4F;     
+  --muted: #62696B;      
+  --line: #D8DCDD;       
 
   /* Supporting palette */
-  --surface: #EDE9E1;    
-  --surface-dark: #292824; 
-  --brass: #A58A5B;
+  --surface: #F2F3F2;    
+  --surface-dark: #252A2C; 
+  --brass: #454C4F;
 
   /* Logo signature color — matches the red dots in the monogram mark.
      Reserved for the logo itself and rare, deliberate accents only
      (e.g. a status dot or "new" indicator). Not used for general UI
      accents like buttons/links — --accent handles those. */
-  --logo-red: #E30613;
+  --logo-red: #FF0000;
 }
 
 .dark {
-  /* SU.EN STUDIO — Dark Architectural Theme */
-  --background: #100F0B; 
-  --foreground: #F7F5F0; 
+  color-scheme: dark;
+  --action: #FF8A80;
+  --selection-background: #65332F;
+  --selection-foreground: #F5F6F4;
+  /* SU.EN STUDIO — Graphite Architectural Theme */
+  --background: #191C1D; 
+  --foreground: #F5F6F4; 
 
-  --accent: #8A8D7D;     
-  --muted: #A6A198;      
-  --line: #393731;       
+  --accent: #D0D5D6;     
+  --muted: #A7AFB1;      
+  --line: #42494B;       
 
   /* Supporting palette */
-  --surface: #292824;    
-  --surface-dark: #100F0B;
-  --brass: #B39A6B;
+  --surface: #252A2C;    
+  --surface-dark: #191C1D;
+  --brass: #D0D5D6;
 
   /* Logo red stays constant across themes — it's a fixed brand mark
      color, not a UI token that should shift with light/dark mode. */
-  --logo-red: #E30613;
+  --logo-red: #FF0000;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-action: var(--action);
   --color-muted: var(--muted);
   --color-line: var(--line);
 
@@ -54,10 +70,10 @@
   --color-logo-red: var(--logo-red);
 
   /* Fixed colors for specific absolute overlays */
-  --color-ink: #100F0B;
-  --color-bone: #F7F5F0;
-  --color-stone: #C9C3B8;
-  --color-charcoal: #292824;
+  --color-ink: #191C1D;
+  --color-bone: #F5F6F4;
+  --color-stone: #D8DCDD;
+  --color-charcoal: #252A2C;
 
   /* THE AVANT-GARDE FONT MAPPINGS */
   --font-display: var(--font-syne);
@@ -73,4 +89,59 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
+}
+@layer base {
+  ::selection {
+    background: var(--selection-background);
+    color: var(--selection-foreground);
+  }
+
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--action);
+    outline-offset: 4px;
+  }
+}
+
+@layer components {
+  .studio-link {
+    text-decoration-line: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: .25em;
+    transition: color var(--m-out) var(--m-ease),
+      text-decoration-color var(--m-out) var(--m-ease);
+  }
+
+  .studio-button {
+    transition: transform var(--m-out) var(--m-ease),
+      background-color var(--m-out) var(--m-ease),
+      color var(--m-out) var(--m-ease),
+      border-color var(--m-out) var(--m-ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .studio-link:hover {
+      color: var(--action);
+      text-decoration-color: currentColor;
+      transition-duration: var(--m-in);
+    }
+
+    .studio-button:hover {
+      transform: translateY(-1px);
+      transition-duration: var(--m-in);
+    }
+  }
+
+  .studio-button:active {
+    transform: translateY(1px) scale(.985);
+    transition-duration: var(--m-press);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .studio-button,
+    .studio-button:hover,
+    .studio-button:active {
+      transform: none;
+      transition-property: background-color, color, border-color;
+    }
+  }
 }
