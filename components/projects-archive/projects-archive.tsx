@@ -1,148 +1,78 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PROJECTS } from "@/lib/projects-data";
+import styles from "./projects-archive.module.css";
 
-gsap.registerPlugin(ScrollTrigger);
+type Category = "All" | (typeof PROJECTS)[number]["category"];
+type Sort = "newest" | "oldest" | "name";
+const CATEGORIES: Category[] = ["All", ...Array.from(new Set(PROJECTS.map((project) => project.category)))];
+
+function Arrow() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" /></svg>;
+}
 
 export default function ProjectsArchive() {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-
-  // Tracks whether the component is currently mounted so async callbacks
-  // (like an image's onLoad firing late) don't call ScrollTrigger.refresh()
-  // after cleanup has already run.
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    // Keep the refs array in sync with the current list length so a
-    // future filtered/shorter list doesn't leave stale nodes behind
-    // that GSAP would otherwise still try to animate.
-    cardRefs.current = cardRefs.current.slice(0, PROJECTS.length);
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      cardRefs.current.forEach((card) => {
-        if (!card) return;
-        gsap.fromTo(
-          card,
-          { opacity: 0, y: 40, filter: "blur(8px)" },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
-    }, gridRef);
-
-    return () => {
-      isMountedRef.current = false;
-      ctx.revert();
-    };
-  }, []);
-
-  const handleImageLoad = () => {
-    if (isMountedRef.current) {
-      ScrollTrigger.refresh();
-    }
-  };
+  const [category, setCategory] = useState<Category>("All");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<Sort>("newest");
+  const reducedMotion = useReducedMotion();
+  const visible = useMemo(() => {
+    const words = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+    return PROJECTS.filter((project) => {
+      const text = `${project.title} ${project.location} ${project.year} ${project.category}`.toLocaleLowerCase();
+      return (category === "All" || project.category === category) && words.every((word) => text.includes(word));
+    }).sort((a, b) => sort === "name" ? a.title.localeCompare(b.title) : sort === "oldest" ? Number(a.year) - Number(b.year) : Number(b.year) - Number(a.year));
+  }, [category, query, sort]);
+  const reset = () => { setCategory("All"); setQuery(""); };
 
   return (
-    <main className="mx-auto max-w-7xl px-5 sm:px-6 md:px-12 lg:px-24 pt-28 sm:pt-32 lg:pt-40 pb-20 sm:pb-28">
-      {/* Header */}
-      <div className="max-w-2xl">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent inline-flex items-center gap-2">
-          {/* Small red dot before "Archive" — echoes the two dots in the
-              logo mark, matching the eyebrow-label treatment used across
-              the hero, studio-bio, and featured-projects sections. */}
-          <span
-            className="w-1 h-1 rounded-full bg-[var(--logo-red)] shrink-0"
-            aria-hidden="true"
-          />
-          Archive
-        </p>
-        <h1 className="mt-3 font-display text-4xl sm:text-6xl lg:text-7xl font-bold uppercase tracking-tighter text-foreground">
-          All Projects
-        </h1>
-        <p className="mt-4 sm:mt-5 font-body text-sm sm:text-base text-foreground/70 leading-relaxed">
-          Every commission, from first sketch to final handover.
-        </p>
-      </div>
+    <section className={styles.archive} aria-labelledby="archive-heading">
+      <div className={styles.wrap}>
+        <header className={styles.header}>
+          <div><p className={styles.eyebrow}><span className={styles.dot} aria-hidden="true" />SU.EN Studio · Work</p><h1 id="archive-heading" className={styles.heading}>Project archive<span className={styles.fullStop}>.</span></h1></div>
+          <p className={styles.introduction}>Homes, interiors, and spaces for business. Find a project by name, place, or year.</p>
+        </header>
 
-      {/* Grid */}
-      <div
-        ref={gridRef}
-        className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 sm:gap-y-12"
-      >
-        {PROJECTS.map((project, i) => (
-          <Link
-            key={project.slug}
-            href={`/projects/${project.slug}`}
-            ref={(el) => {
-              cardRefs.current[i] = el;
-            }}
-            className="group flex flex-col gap-4 outline-none transition-transform duration-300 active:scale-[0.98] active:duration-100 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
-          >
-            {/* 3:2 mirrors the landscape aspect most of the studio's
-                photography comes in — a 4:5 portrait crop was cutting
-                into the tops/bottoms of wide architectural shots. */}
-            <div className="relative w-full aspect-[3/2] overflow-hidden bg-line">
-              <Image
-                src={project.img}
-                alt={project.title}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover saturate-[0.85] sepia-[0.08] contrast-[1.05] transition-all duration-700 group-hover:saturate-100 group-hover:sepia-0 group-hover:contrast-100 group-hover:scale-[1.03]"
-                onLoad={handleImageLoad}
-              />
+        <div className={styles.toolbar}>
+          <div className={styles.filters} role="group" aria-label="Filter projects by category">
+            {CATEGORIES.map((item) => <button key={item} type="button" aria-pressed={category === item} aria-controls="archive-results" onClick={() => setCategory(item)}><span>{item}</span><span className={styles.filterCount}>{item === "All" ? PROJECTS.length : PROJECTS.filter((project) => project.category === item).length}</span></button>)}
+          </div>
+          <div className={styles.searchAndSort}>
+            <div className={styles.searchField}>
+              <label htmlFor="archive-search">Find a project</label>
+              <div className={styles.inputWrap}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" strokeWidth="1.5" /><path d="m15 15 5 5" stroke="currentColor" strokeWidth="1.5" /></svg><input id="archive-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, place, or year" autoComplete="off" aria-controls="archive-results" /></div>
             </div>
+            <div className={styles.sortField}><label htmlFor="archive-sort">Sort by</label><select id="archive-sort" value={sort} onChange={(event) => setSort(event.target.value as Sort)}><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="name">Name A–Z</option></select></div>
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-1 border-t border-line pt-4 transition-colors duration-500 group-hover:border-accent">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent inline-flex items-center">
-                {project.id} — {project.category}
-                {/* Quiet dot that fades and scales in on card hover —
-                    same interactive echo used on featured-projects cards. */}
-                <span
-                  className="w-1 h-1 rounded-full bg-[var(--logo-red)] ml-1.5 opacity-0 scale-50 transition-all duration-300 motion-reduce:transition-none group-hover:opacity-100 group-hover:scale-100 shrink-0"
-                  aria-hidden="true"
-                />
-              </span>
-              <h2 className="font-display text-lg sm:text-xl text-foreground">
-                {project.title}
-              </h2>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                {project.location} · {project.year}
-              </span>
-            </div>
-          </Link>
-        ))}
+        <div className={styles.resultsBar}>
+          <p role="status" aria-live="polite" aria-atomic="true">{visible.length} {visible.length === 1 ? "project" : "projects"}{category !== "All" ? ` · ${category}` : ""}{query.trim() ? ` matching “${query.trim()}”` : ""}</p>
+          {(category !== "All" || query) && <button type="button" onClick={reset} className={styles.reset}>Clear filters</button>}
+        </div>
+
+        <div id="archive-results" className={styles.grid}>
+          <AnimatePresence initial={false} mode="popLayout">
+            {visible.map((project, index) => (
+              <motion.article key={project.slug} layout={!reducedMotion} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ layout: { duration: reducedMotion ? 0 : .24, ease: [.2, .8, .2, 1] }, opacity: { duration: reducedMotion ? 0 : .12 } }} className={styles.project}>
+                <Link href={`/projects/${project.slug}`} className={styles.projectLink} aria-label={`View ${project.title} project`}>
+                  <div className={styles.projectHeader}>
+                    <div><p className={styles.meta}>{project.location} · {project.year} · {project.category}</p><h2 className={styles.projectTitle}>{project.title}</h2></div>
+                    <span className={styles.projectAction}><span>View project</span><Arrow /></span>
+                  </div>
+                  <div className={styles.imageFrame}><Image src={project.img} alt={`${project.title}, ${project.category.toLowerCase()} project in ${project.location}`} fill sizes="(max-width: 639px) 100vw, 50vw" loading={index < 2 ? "eager" : "lazy"} className={styles.image} /></div>
+                </Link>
+              </motion.article>
+            ))}
+          </AnimatePresence>
+        </div>
+        {visible.length === 0 && <div className={styles.empty}><h2>No matching projects<span className={styles.fullStop}>.</span></h2><p>Try another name, place, or year, or return to the complete archive.</p><button type="button" onClick={reset}>Show all projects<Arrow /></button></div>}
       </div>
-
-      {/* Empty state */}
-      {PROJECTS.length === 0 && (
-        <p className="mt-16 font-mono text-xs uppercase tracking-widest text-muted text-center">
-          No projects available.
-        </p>
-      )}
-    </main>
+    </section>
   );
 }
+
