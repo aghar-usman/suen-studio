@@ -1,592 +1,216 @@
 .heroWrap {
+  --hero-gutter: clamp(24px, 5.55vw, 80px);
+  --hero-ease: cubic-bezier(.2, .8, .2, 1);
   position: relative;
-  /* GSAP pins this wrapper and uses the additional height as the scroll distance. */
-  height: 200dvh;
-  background-color: var(--background);
+  background: var(--background);
   color: var(--foreground);
-  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Reduced motion: skip the scroll-jack entirely. */
-.heroWrap[data-motion="reduced"] {
-  height: 100dvh;
-}
+.heroWrap[data-motion="ready"] { height: 315svh; }
 
-.heroWrap[data-motion="reduced"] .slatsContainer,
-.heroWrap[data-motion="reduced"] .scrollGuide {
-  display: none;
-}
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
-.hero {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 720px;
   overflow: hidden;
   background: var(--background);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-
-/* =========================================================
-   SLATS CONTAINER
-   ========================================================= */
-
-.slatsContainer {
-  position: absolute;
-  top: 80px; /* Navbar clearance */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  display: flex;
-  pointer-events: none;
-  transform-style: preserve-3d;
-}
-
-/* =========================================================
-   INDIVIDUAL SLAT
-   ========================================================= */
-
-.slat {
-  position: relative;
-  flex: 1 1 0;
-  height: 100%;
-  perspective: 1400px;
-  perspective-origin: center center;
-  border-right: 1px solid var(--line);
-  will-change: transform, opacity;
-  transition: border-color 0.5s ease;
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-.slat:last-child {
-  border-right: none;
-}
-
-/* =========================================================
-   GSAP SCROLL WRAPPER (Outer)
-   ========================================================= */
-
-.scrollFlip {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  will-change: transform;
-}
-
-/* =========================================================
-   CSS HOVER WRAPPER (Inner)
-   ========================================================= */
-
-.hoverFlip {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .heroWrap:not(.isScrolling) .slat:hover .hoverFlip {
-    transform: rotateY(180deg) translateZ(-30px);
-  }
-}
-
-/* =========================================================
-   SHARED FACE
-   ========================================================= */
-
-.slatFace {
-  position: absolute;
-  inset: 0;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-}
-
-/* =========================================================
-   FRONT FACE
-   ========================================================= */
-
-.slatFront {
-  background: var(--background);
-  transition: background-color 0.5s ease;
-}
-
-.frontImg {
-  position: absolute;
-  top: 20px;
-  bottom: 20px;
-  width: 600%;
-  max-width: none;
-  height: calc(100% - 40px);
-  left: calc(var(--i) * -100%);
-  background-color: transparent;
-  background-image: url("/images/Logo-light.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center center;
-  opacity: 0.95;
-  pointer-events: none;
-}
-
-/* Dark mode — swap to the dedicated dark-variant asset instead of
-   filtering, so the logo's red dots stay true red instead of
-   inverting to cyan. */
-:global(.dark) .frontImg {
-  background-image: url("/images/Logo-dark.png");
-}
-
-/* =========================================================
-   PANEL INDEX
-   ========================================================= */
-
-.idx {
-  position: absolute;
-  top: clamp(1rem, 3.6vh, 1.8rem);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono), monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  white-space: nowrap;
-  z-index: 2;
-  pointer-events: none;
-  transition: color 0.5s ease;
-}
-
-/* =========================================================
-   FRONT OVERLAY
-   ========================================================= */
-
-.slatFrontOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    transparent 40%,
-    color-mix(in srgb, var(--foreground) 18%, transparent) 100%
-  );
-  pointer-events: none;
-}
-
-/* =========================================================
-   BACK FACE
-   ========================================================= */
-
-.slatBack {
-  transform: rotateY(180deg);
-  background: var(--background);
-  transition: background-color 0.5s ease;
-}
-
-.backLayer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(1rem, 3vw, 1.6rem);
-  background: var(--background);
-  pointer-events: none;
-  transition: background-color 0.5s ease;
-}
-
-/* =========================================================
-   BACK TYPOGRAPHY
-   ========================================================= */
-
-.word {
-  font-family: var(--font-display), sans-serif;
-  font-weight: 700;
-  font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  font-size: clamp(1.1rem, 2.4vw, 1.9rem);
-  color: var(--foreground);
-  transition: color 0.5s ease;
-}
-
-.cap {
-  margin-top: 0.7rem;
-  font-family: var(--font-mono), monospace;
-  font-size: clamp(0.5rem, 1.2vw, 0.62rem);
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  max-width: 20ch;
-  transition: color 0.5s ease;
-}
-
-.num {
-  position: absolute;
-  top: 1.2rem;
-  left: 1.2rem;
-  font-family: var(--font-mono), monospace;
-  font-size: 0.6rem;
-  color: var(--accent);
-  transition: color 0.5s ease;
-}
-
-/* Small red dot after each panel's numeral, echoing the two dots
-   in the logo mark itself — a quiet callback to the brand on the
-   back face of every slat. */
-.num::after {
-  content: "";
-  display: inline-block;
-  width: 3px;
-  height: 3px;
-  margin-left: 4px;
-  border-radius: 50%;
-  background: var(--logo-red);
-  vertical-align: middle;
-}
-
-/* =========================================================
-   WELCOME SCREEN
-   ========================================================= */
 
 .welcomeScreen {
-  position: absolute;
-  top: 80px; /* Navbar clearance */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
+  position: relative;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background: var(--background);
-  text-align: center;
-  /* Scales top/bottom padding dynamically if the screen is short */
-  padding: clamp(1rem, 3vh, 3rem) clamp(1.5rem, 4vw, 4rem);
-  transition: background-color 0.5s ease;
+  padding: 112px var(--hero-gutter) 88px;
 }
 
-/* =========================================================
-   WELCOME LOGO
-   ========================================================= */
-
-.wMark {
-  /* Increased maximum size from 220px to 280px */
-  width: clamp(100px, min(18vw, 18vh), 280px);
-  height: clamp(100px, min(18vw, 18vh), 280px);
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  margin-bottom: clamp(0.5rem, 2vh, 1.5rem);
-  will-change: transform, opacity;
+.contentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 4.4vw, 72px);
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  align-items: stretch;
 }
 
-.wMarkLight {
-  display: block;
-  mix-blend-mode: multiply;
+.copy { display: flex; flex-direction: column; align-items: flex-start; }
+
+.eyebrow, .bottomRail, .topRail, .introFooter, .panelNumber {
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
-.wMarkDark {
-  display: none;
-}
-
-:global(.dark) .wMarkLight {
-  display: none;
-}
-
-:global(.dark) .wMarkDark {
-  display: block;
-}
-
-/* =========================================================
-   ESTABLISHED LABEL
-   ========================================================= */
-
-.est {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: clamp(0.5rem, 1.5vh, 1.2rem);
-  will-change: transform, opacity;
-  transition: color 0.5s ease;
-}
-
-/* Small red dot before "Est." — a quiet nod to the two dots in the
-   logo mark, standing in almost like punctuation. */
-.est::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 0.55em;
-  margin-bottom: 1px;
-  border-radius: 50%;
-  background: var(--logo-red);
-  vertical-align: middle;
-}
-
-/* =========================================================
-   MAIN HEADLINE
-   ========================================================= */
-
-.punchline {
-  font-family: var(--font-display), sans-serif;
-  font-weight: 500;
-  font-style: normal;
-  text-transform: uppercase;
-  /* Negative tracking at display scale — letters read too far apart
-     as size grows, unlike the small mono labels elsewhere on this
-     page which correctly use small positive tracking. */
-  letter-spacing: -0.015em;
-  /* Increased maximum font size from 4.75rem to 5.5rem */
-  font-size: clamp(1.75rem, min(5.5vw, 6.5vh), 5.5rem);
-  line-height: 1.12;
-  color: var(--foreground);
-  max-width: 22ch;
-  margin-bottom: clamp(0.5rem, 2vh, 1.2rem);
-  will-change: transform, opacity;
-  transition: color 0.5s ease;
-}
-
-.punchline em {
-  font-style: normal;
-  color: var(--accent);
-}
-
-/* =========================================================
-   SUBTITLE
-   ========================================================= */
-
-.sub {
-  font-family: var(--font-mono), monospace;
-  /* Increased maximum font size from 0.7rem to 0.8rem */
-  font-size: clamp(0.6rem, 1.5vw, 0.8rem);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 32px;
   color: var(--muted);
-  margin-bottom: clamp(1rem, 3vh, 2rem);
-  will-change: transform, opacity;
-  transition: color 0.5s ease;
 }
 
-/* =========================================================
-   CTA
-   ========================================================= */
+.dot { display: inline-block; width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--logo-red); }
 
-.ctaButton {
+.headline {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(52px, 6vw, 92px);
+  line-height: .98;
+  font-weight: 400;
+  letter-spacing: -.06em;
+}
+
+.headlineLine { display: block; white-space: nowrap; }
+.fullStop { color: var(--logo-red); letter-spacing: 0; }
+
+.description {
+  max-width: 38ch;
+  margin: 28px 0 32px;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
+
+.primary, .secondary, .skip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Increased button padding */
-  padding: 1rem 2.25rem;
-  margin-top: clamp(0.2rem, 1.5vh, 1rem);
-  font-family: var(--font-mono), monospace;
-  /* Increased button text size */
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--background);
-  background-color: var(--foreground);
-  border: 1px solid var(--foreground);
-  transition:
-    background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-    color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-    border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  gap: 18px;
+  min-height: 48px;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
   text-decoration: none;
   cursor: pointer;
-  will-change: transform, opacity;
-  position: relative;
-  z-index: 50;
+  transition: color 120ms var(--hero-ease), background-color 120ms var(--hero-ease), transform 120ms var(--hero-ease);
 }
 
-.ctaButton:hover {
-  background-color: transparent;
-  color: var(--foreground);
-  border-color: var(--accent);
-}
+.primary { padding: 14px 20px; background: var(--foreground); color: var(--background); border: 1px solid var(--foreground); }
+.secondary { color: var(--foreground); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 6px; }
+.arrow, .downArrow { width: 20px; height: 20px; flex-shrink: 0; transition: transform 150ms var(--hero-ease); }
+.downArrow { transform: rotate(90deg); }
 
-/* Instant feedback on press, not on release — the moment lag
-   appears here the button stops feeling directly touchable. */
-.ctaButton:active {
-  transform: scale(0.97);
-  transition-duration: 0.1s;
-}
+.projectImage { position: relative; min-width: 0; min-height: 100%; overflow: hidden; background: var(--surface); }
+.projectImage img { object-fit: cover; object-position: 49% 50%; }
 
-.ctaButton:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-/* =========================================================
-   GSAP SCROLL LOCK
-   ========================================================= */
-
-.isScrolling .slat {
-  pointer-events: none !important;
-}
-
-/* =========================================================
-   SCROLL GUIDE (Indicator)
-   ========================================================= */
-
-.scrollGuide {
+.bottomRail, .topRail {
   position: absolute;
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+  left: var(--hero-gutter);
+  right: var(--hero-gutter);
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.55rem;
-  opacity: 1;
-  pointer-events: none;
-  transition: opacity 0.5s ease, background-color 0.5s ease, border-color 0.5s ease;
-  padding: 0.6rem 1.15rem 0.6rem 1.25rem;
-  border-radius: 999px;
-  background: var(--foreground);
-  border: 1px solid var(--foreground);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--foreground) 25%, transparent);
+  color: var(--muted);
 }
 
-/* Small pulsing red dot before "Scroll" — a quiet "live" indicator,
-   echoing the logo's dots while giving the guide a bit of personality. */
-.scrollDot {
-  width: 5px;
-  height: 5px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--logo-red);
-  animation: scrollDotPulse 1.8s ease-in-out infinite;
+.bottomRail { bottom: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+.intro { display: none; position: absolute; inset: 80px 0 0; z-index: 2; pointer-events: none; }
+.heroWrap[data-motion="ready"] .intro { display: block; }
+.topRail { top: 24px; z-index: 3; }
+
+.slatsContainer { position: absolute; inset: 0; display: flex; pointer-events: none; }
+.slat { position: relative; flex: 1 1 0; min-width: 0; perspective: 1800px; }
+.scrollFlip { position: absolute; inset: 0; transform-style: preserve-3d; }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; background: var(--background); border-right: 1px solid var(--line); }
+.slat:last-child .face { border-right: none; }
+.logoSlice {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 600%;
+  left: calc(var(--i) * -100%);
+  background: var(--background) url("/images/Logo-light.png") center / auto 74% no-repeat;
+}
+:global(.dark) .logoSlice { background-image: url("/images/Logo-dark.png"); }
+.back { transform: rotateY(180deg); padding: 32px clamp(16px, 2vw, 32px); display: flex; flex-direction: column; justify-content: space-between; }
+.slat:nth-child(even) .back { background: var(--surface); }
+.panelNumber { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+.panelNumber .dot { width: 4px; height: 4px; flex-basis: 4px; }
+.panelCopy { display: flex; flex-direction: column; gap: 20px; }
+.panelWord { font-family: var(--font-display), sans-serif; font-size: clamp(20px, 2.25vw, 34px); font-weight: 400; letter-spacing: -.04em; }
+.panelDetail { font-family: var(--font-body), Arial, sans-serif; font-size: 14px; line-height: 1.6; max-width: 18ch; color: var(--muted); }
+.panelRule { width: 24px; height: 1px; background: var(--foreground); }
+
+.introFooter { position: absolute; bottom: 20px; left: var(--hero-gutter); right: var(--hero-gutter); z-index: 3; display: flex; align-items: center; justify-content: space-between; }
+.scrollGuide { display: inline-flex; align-items: center; gap: 12px; }
+.skip { border: 0; padding: 0 0 0 16px; background: transparent; color: var(--foreground); pointer-events: auto; }
+
+.primary:focus-visible, .secondary:focus-visible, .skip:focus-visible { outline: 2px solid var(--action, var(--accent)); outline-offset: 5px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover { transform: translateY(-1px); background: var(--accent); transition-duration: 150ms; }
+  .secondary:hover, .skip:hover { color: var(--action, var(--accent)); text-decoration-color: currentColor; }
+  .primary:hover .arrow, .secondary:hover .arrow, .skip:hover .arrow { transform: translateX(3px); }
+}
+.primary:active { transform: translateY(1px) scale(.985); transition-duration: 90ms; }
+
+@media (min-width: 769px) and (max-height: 780px) {
+  .stage { min-height: 620px; }
+  .welcomeScreen { padding-top: 112px; padding-bottom: 72px; }
+  .headline { font-size: clamp(48px, 5.3vw, 76px); }
+  .eyebrow { margin-bottom: 24px; }
+  .description { margin-block: 20px 24px; }
 }
 
-@keyframes scrollDotPulse {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scale(0.85);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
+@media (max-width: 1023px) and (min-width: 769px) {
+  .contentGrid { gap: 32px; grid-template-columns: 1fr 1fr; }
+  .headline { font-size: clamp(44px, 5.7vw, 58px); }
+  .actions { align-items: flex-start; flex-direction: column; gap: 8px; }
 }
 
-.scrollText {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--background);
-  transition: color 0.5s ease;
+@media (max-width: 768px) {
+  .heroWrap[data-motion="ready"] { height: 265svh; }
+  .stage { height: 100svh; min-height: 760px; }
+  .welcomeScreen { padding: 104px var(--hero-gutter) 70px; justify-content: flex-start; }
+  .contentGrid { grid-template-columns: 1fr; gap: 24px; flex: 1; grid-template-rows: auto minmax(180px, 1fr); min-height: 0; }
+  .eyebrow { margin-bottom: 16px; }
+  .headline { font-size: clamp(36px, 10.8vw, 64px); line-height: 1; letter-spacing: -.055em; }
+  .description { margin: 20px 0 24px; max-width: 39ch; }
+  .actions { gap: 12px 20px; width: 100%; }
+  .primary, .secondary { font-size: 14px; gap: 12px; }
+  .primary { padding-inline: 16px; }
+  .projectImage { min-height: 180px; }
+  .projectImage img { object-position: 50% 56%; }
+  .bottomRail { bottom: 20px; font-size: 13px; gap: 20px; }
+  .bottomRail span:last-child { display: none; }
+  .topRail { top: 20px; }
+  .topRail span:last-child { max-width: 16ch; text-align: right; }
+  .slatsContainer { flex-direction: column; }
+  .slat { min-height: 0; width: 100%; }
+  .face { border-right: none; border-bottom: 1px solid var(--line); }
+  .slat:last-child .face { border-bottom: none; }
+  .logoSlice { width: 100%; height: 600%; top: calc(var(--i) * -100%); left: 0; bottom: auto; background-size: 82% auto; }
+  .back { padding: 16px 24px; flex-direction: row; align-items: center; gap: 24px; }
+  .panelNumber { gap: 8px; flex-shrink: 0; }
+  .panelCopy { flex: 1; flex-direction: row; align-items: center; gap: 20px; }
+  .panelWord { min-width: 74px; font-size: 24px; }
+  .panelDetail { max-width: 24ch; font-size: 13px; line-height: 1.4; }
+  .panelRule { display: none; }
 }
 
-.scrollArrow {
-  width: 13px;
-  height: 13px;
-  color: var(--background);
-  transition: color 0.5s ease;
-  animation: scrollArrowNudge 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-@keyframes scrollArrowNudge {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translateY(3px);
-    opacity: 1;
-  }
+@media (max-width: 359px) {
+  .actions { flex-direction: column; align-items: stretch; gap: 4px; }
+  .primary { width: 100%; }
+  .secondary { justify-content: flex-start; }
+  .stage { min-height: 840px; }
+  .panelDetail { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scrollArrow {
-    animation: none;
-  }
-
-  .scrollDot {
-    animation: none;
-    opacity: 1;
-  }
+  .heroWrap[data-motion="ready"] .intro { display: none; }
+  .primary, .secondary, .skip, .arrow { transition: none; }
+  .primary:hover, .primary:active, .primary:hover .arrow, .secondary:hover .arrow, .skip:hover .arrow { transform: none; }
 }
 
-/* =========================================================
-   MOBILE LAYOUT FIXES
-   ========================================================= */
+.revealItem { opacity: 1; }
 
-@media (max-width: 768px) {
-  /* Convert vertical columns to horizontal rows on mobile */
-  .slatsContainer {
-    flex-direction: column;
-  }
-
-  .slat {
-    width: 100%;
-    cursor: default;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .slat:last-child {
-    border-bottom: none;
-  }
-
-  /* Scale the image mask correctly for vertical slicing */
-  .frontImg {
-    width: calc(100% - 40px);
-    height: calc(600% - 40px);
-    left: 20px;
-    top: calc((var(--i) * -100%) + 20px);
-    bottom: auto;
-  }
-
-  /* Re-align front panel index */
-  .idx {
-    top: 50%;
-    left: 1.5rem;
-    transform: translateY(-50%);
-    font-size: 0.55rem;
-  }
-
-  /* Layout back panel text horizontally side-by-side */
-  .backLayer {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: left;
-    padding: 1rem 1.5rem;
-    gap: 1.25rem;
-  }
-
-  .num {
-    position: static;
-    margin-top: 0;
-    font-size: 0.65rem;
-    flex-shrink: 0;
-  }
-
-  .word {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .cap {
-    margin-top: 0;
-    font-size: 0.55rem;
-    max-width: none;
-    flex: 1; /* Allows caption to cleanly wrap and take remaining width */
-  }
-}
+.front { transform: rotateY(0deg); }
