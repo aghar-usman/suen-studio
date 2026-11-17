@@ -131,7 +131,7 @@ export default function Hero() {
               </div>
             </div>
             <div className={`${styles.projectImage} ${styles.revealItem}`}>
-              <Image src="/images/p1.jpg" alt="SU.EN Studio residence with white volumes, timber screens, and deep shaded verandas among coconut palms" fill preload sizes="(max-width: 768px) 180vw, 52vw" />
+              <Image src="/images/p1.jpg" alt="SU.EN Studio residence with white volumes, timber screens, and deep shaded verandas among coconut palms" fill preload sizes="(max-width: 768px) 100vw, 52vw" />
             </div>
           </div>
           <div className={`${styles.bottomRail} ${styles.revealItem}`}>
@@ -167,3 +167,4 @@ export default function Hero() {
     </section>
   );
 }
+
