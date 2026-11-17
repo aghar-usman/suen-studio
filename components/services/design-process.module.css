@@ -80,3 +80,6 @@
   .contactLink, .contactLink > span::after, .contactLink svg { transition: none; }
   .contactLink:hover svg { transform: none; }
 }
+.visuals { display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,3.3vw,48px); margin-top:32px; align-items:stretch; }
+.visuals .detailImage { height:auto; min-height:340px; margin:0; }
+@media(max-width:767px) { .visuals { grid-template-columns:1fr; gap:24px; } .visuals .detailImage { min-height:0; aspect-ratio:4/3; } }
