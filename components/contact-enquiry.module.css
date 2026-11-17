@@ -22,3 +22,9 @@
 @media(max-width:767px) { .ctaInner { grid-template-columns:1fr; gap:32px; } .archiveCta { padding-block:56px; } .ctaAction > p:first-child { font-size:16px; } }
 @media(max-width:479px) { .primary { width:100%; } .panel { padding:28px 24px; } .list li { gap:12px; } }
 @media(prefers-reduced-motion:reduce) { .primary,.arrow { transition:none; } .primary:hover,.primary:active,.primary:hover .arrow { transform:none; } }
+@media(max-width:359px) {
+  .panel { padding:24px 20px; }
+  .panelHeading { font-size:30px; }
+  .list li { gap:8px; }
+  .primary { padding-inline:18px; }
+}
