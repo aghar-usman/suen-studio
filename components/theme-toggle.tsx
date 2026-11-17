@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { flushSync } from "react-dom";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const switching = useRef(false);
 
   useEffect(() => {
     // Sync the React component with the raw DOM state (set by the 
@@ -12,15 +14,46 @@ export default function ThemeToggle() {
     
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    document.documentElement.classList.toggle("dark", newTheme);
-    localStorage.setItem("theme", newTheme ? "dark" : "light");
+  const toggleTheme = async (event: MouseEvent<HTMLButtonElement>) => {
+    if (switching.current) return;
+    const root = document.documentElement;
+    const nextDark = !root.classList.contains("dark");
+    const update = () => {
+      flushSync(() => {
+        root.classList.toggle("dark", nextDark);
+        setIsDark(nextDark);
+      });
+      try { localStorage.setItem("theme", nextDark ? "dark" : "light"); } catch { /* Theme still works when storage is unavailable. */ }
+    };
+    if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      update();
+      return;
+    }
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = bounds.left + bounds.width / 2;
+    const y = bounds.top + bounds.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 2;
+    root.style.setProperty("--theme-wipe-x", `${x}px`);
+    root.style.setProperty("--theme-wipe-y", `${y}px`);
+    root.style.setProperty("--theme-wipe-radius", `${radius}px`);
+    root.dataset.themeTransition = "active";
+    switching.current = true;
+    try {
+      const transition = document.startViewTransition(update);
+      void transition.ready.catch(() => undefined);
+      await transition.finished;
+    } catch {
+      update();
+    } finally {
+      switching.current = false;
+      delete root.dataset.themeTransition;
+      root.style.removeProperty("--theme-wipe-x");
+      root.style.removeProperty("--theme-wipe-y");
+      root.style.removeProperty("--theme-wipe-radius");
+    }
   };
 
   // Prevent hydration mismatch by rendering a blank placeholder of the EXACT 
@@ -56,7 +89,8 @@ export default function ThemeToggle() {
         focus-visible:outline-offset-4
         rounded-sm
       "
-      aria-label="Toggle theme"
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-pressed={isDark}
     >
       {isDark ? (
         // Sun Icon
@@ -80,3 +114,4 @@ export default function ThemeToggle() {
     </button>
   );
 }
+
