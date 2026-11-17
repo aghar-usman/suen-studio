@@ -90,3 +90,7 @@
   .project:hover, .project:active, .project:hover .imageFrame img, .project:hover .viewProject svg, .archiveLink:hover svg { transform: none; }
 }
 
+@media(max-width:639px) {
+  .supportingImage { aspect-ratio:3/2; }
+  .projectHeader { align-items:center; }
+}
