@@ -64,3 +64,13 @@
 .backToTop:hover .upArrow { transform:rotate(-90deg); }
 }
 
+@media(max-width:639px) {
+  .directory { grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); gap:28px 20px; padding-block:36px; }
+  .brand { grid-column:1/-1; }
+  .logoLink { flex-basis:64px; width:64px; height:64px; }
+  .logoLink img { width:64px; height:64px; }
+  .brandName { font-size:22px; }
+  .linkColumn .textLink { font-size:14px; min-height:44px; }
+  .bottomRow { gap:8px 16px; }
+  .footer { padding-bottom:max(20px,env(safe-area-inset-bottom,0px)); }
+}
