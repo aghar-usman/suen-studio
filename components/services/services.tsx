@@ -51,7 +51,7 @@ export default function Services() {
 
         <div className={styles.detailImage}>
           <Image
-            src="public/images/projects/casa-dhalaan/05.jpg"
+            src="/images/projects/casa-dhalaan/05.jpg"
             alt="Red and black chairs beside a pale kitchen counter, an interior detail at Casa Dhalaan by SU.EN Studio"
             fill
             sizes="100vw"
