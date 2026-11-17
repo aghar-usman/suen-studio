@@ -37,3 +37,12 @@
 @media (max-width:359px) { .brand > span { display:none; }.controls { gap:8px; }.menuButton { gap:8px; } }
 @media (max-height:600px) { .mobileLinks { padding-block:16px; }.mobileLinks > a { min-height:56px; }.mobileLabel { font-size:32px; }.menuFooter { padding-block:16px; } }
 @media (prefers-reduced-motion:reduce) { .menu[open],.menu::backdrop { animation:none; }.mobileLinks > a > svg,.themeToggle > button { transition:none; }.mobileLinks > a:hover > svg,.themeToggle > button { transform:none; } }
+@media(max-width:639px) {
+  .bar { gap:12px; }
+  .brand { font-size:16px; gap:8px; }
+  .controls { gap:8px; }
+  .themeToggle { padding-right:4px; }
+  .menuButton { gap:10px; }
+  .menu { padding-bottom:env(safe-area-inset-bottom,0px); overscroll-behavior:contain; }
+  .menuFooter > a { font-size:16px; }
+}
