@@ -1,0 +1,24 @@
+.panel { padding:clamp(28px,3.4vw,48px); background:var(--surface); border-top:2px solid var(--foreground); color:var(--foreground); }
+.label { margin:0 0 24px; font-family:var(--font-body),Arial,sans-serif; font-size:13px; line-height:1.5; color:var(--muted); }
+.panelHeading,.ctaHeading { margin:0; font-family:var(--font-display),Arial,sans-serif; font-weight:400; letter-spacing:-.045em; line-height:1.08; text-wrap:balance; }
+.panelHeading { max-width:18ch; font-size:clamp(32px,3vw,44px); }
+.red { color:var(--logo-red); }
+.description { max-width:48ch; margin:24px 0 32px; font-size:16px; line-height:1.75; color:var(--muted); }
+.brief { padding-top:24px; border-top:1px solid var(--line); }
+.brief .label { margin-bottom:12px; }
+.list { list-style:none; margin:0 0 32px; padding:0; }
+.list li { display:flex; gap:20px; align-items:baseline; padding:12px 0; font-size:16px; line-height:1.5; border-bottom:1px solid var(--line); }
+.list li span { flex:0 0 20px; color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+.primary { display:inline-flex; align-items:center; justify-content:space-between; gap:32px; min-height:52px; padding:14px 24px; background:var(--foreground); color:var(--background); font-size:15px; line-height:1.5; text-decoration:none; transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms; }
+.arrow { display:inline-block; font-size:22px; line-height:1; transition:transform 180ms cubic-bezier(.2,.8,.2,1); }
+.note { max-width:48ch; margin:16px 0 0; font-size:13px; line-height:1.65; color:var(--muted); }
+.archiveCta { padding:80px clamp(24px,5.55vw,80px); background:var(--surface); color:var(--foreground); }
+.ctaInner { max-width:1440px; margin:auto; display:grid; grid-template-columns:1.25fr 1fr; gap:clamp(32px,7vw,112px); align-items:end; }
+.ctaHeading { font-size:clamp(36px,4.1vw,60px); max-width:19ch; }
+.ctaAction > p:first-child { max-width:36ch; margin:0 0 24px; color:var(--muted); font-size:18px; line-height:1.65; }
+.primary:focus-visible { outline:2px solid var(--action,var(--foreground)); outline-offset:5px; }
+@media(hover:hover) and (pointer:fine) { .primary:hover { transform:translateY(-1px); background:var(--accent); } .primary:hover .arrow { transform:translate(3px,-2px); } }
+.primary:active { transform:scale(.985); }
+@media(max-width:767px) { .ctaInner { grid-template-columns:1fr; gap:32px; } .archiveCta { padding-block:56px; } .ctaAction > p:first-child { font-size:16px; } }
+@media(max-width:479px) { .primary { width:100%; } .panel { padding:28px 24px; } .list li { gap:12px; } }
+@media(prefers-reduced-motion:reduce) { .primary,.arrow { transition:none; } .primary:hover,.primary:active,.primary:hover .arrow { transform:none; } }
