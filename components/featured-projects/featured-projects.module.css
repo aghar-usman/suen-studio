@@ -1,290 +1,92 @@
 .section {
-  position: relative;
-  background-color: var(--background);
-  min-height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  position: relative;
-  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 4rem) 1.5rem;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.header a {
-  pointer-events: auto;
-}
-
-/* Small red dot before the "02 / Portfolio" eyebrow label — same
-   treatment as "Est." in the hero and studio-bio sections, echoing
-   the two dots in the logo mark. */
-.eyebrow::before {
-  content: "";
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  margin-right: 0.6em;
-  margin-bottom: 1px;
-  border-radius: 50%;
-  background: var(--logo-red);
-  vertical-align: middle;
-}
-
-/* Marks the origin point of the progress bar track with a tiny red
-   dot, like a pin where the scrub bar begins filling from. */
-.progressTrack {
-  position: relative;
-}
-
-.progressDot {
-  position: absolute;
-  left: -3px;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--logo-red);
-  transform: translateY(-50%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Quiet "selected" indicator that fades in on card hover, next to
-   the project id — a small interactive surprise rather than a
-   static addition. */
-.cardIdDot {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  margin-left: 0.5em;
-  border-radius: 50%;
-  background: var(--logo-red);
-  opacity: 0;
-  transform: scale(0.5);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  vertical-align: middle;
-}
-
-.card:hover .cardIdDot {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.scrollContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 4rem;
-  padding: 1rem clamp(1.5rem, 5vw, 4rem) 5rem;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .scrollContainer {
-    will-change: transform;
-  }
-}
-
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  width: 100%;
-  cursor: pointer;
-  will-change: transform, opacity, filter;
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 6px;
-}
-
-.imageMask {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background-color: var(--line);
-  transition: transform 0.2s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-/* Instant confirmation on press — the hover desaturate/scale on .image
-   only resolves on release, so touch users got no feedback at all
-   until the tap completed. */
-.card:active .imageMask {
-  transform: scale(0.985);
-}
-
-/* 
-  Parallax Wrapper Fix: 
-  On mobile (vertical scroll), we need vertical padding (top/bottom). 
-  We set it to -50px so it can move up and down without exposing the edges.
-*/
-.imageParallaxWrapper {
-  position: absolute;
-  inset: -50px 0; 
-  will-change: transform;
-}
-
-.image {
-  object-fit: cover;
-  transform: scale(1.02);
-  filter: saturate(0.85) sepia(0.08) contrast(1.05);
-  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), filter 1.2s ease;
-  will-change: transform;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--foreground);
-  opacity: 0.03;
-  transition: opacity 0.8s ease;
-  pointer-events: none;
-}
-
-/* Hover States */
-.card:hover .image {
-  transform: scale(1);
-  filter: saturate(1.08) sepia(0) contrast(1);
-}
-
-.card:hover .overlay {
-  opacity: 0;
-}
-
-.metaContainer {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--line);
-  padding-top: 1.25rem;
-  transition: border-color 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.card:hover .metaContainer {
-  border-color: var(--accent);
-}
-
-.endCta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1.5rem 1rem;
-  will-change: transform, opacity;
-}
-
-/* Reduced-motion fallback */
-.section[data-motion="reduced"] {
-  height: auto;
-}
-
-.section[data-motion="reduced"] .scrollContainer {
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-}
-
-.section[data-motion="reduced"] .card {
-  scroll-snap-align: start;
-}
-
-/* =========================================================
-   DESKTOP (HORIZONTAL SCROLL)
-   ========================================================= */
-
-@media (min-width: 768px) {
-  .section {
-    height: 100vh;
-    justify-content: flex-start;
-  }
-
-  .header {
-    flex-direction: row;
-    align-items: flex-end;
-    padding-bottom: 2rem;
-  }
-
-  .scrollContainer {
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-    padding: 0;
-    width: max-content;
-    height: calc(100vh - 160px);
-    margin-top: auto;
-    margin-bottom: 2rem;
-  }
-
-  .card {
-    width: 40vw;
-    max-width: 540px;
-    height: 100%;
-    margin-left: clamp(3rem, 7vw, 6rem);
-    justify-content: space-between;
-  }
-
-  .imageMask {
-    height: calc(100% - 85px);
-    aspect-ratio: unset;
-  }
-
-  /* 
-    Desktop Parallax Fix: 
-    Switch to horizontal buffer so the image can slide left/right on X axis.
-  */
-  .imageParallaxWrapper {
-    inset: 0 -160px;
-  }
-
-  .endCta {
-    width: 28vw;
-    height: 100%;
-    margin-left: 5rem;
-    padding: 0 5rem 0 0;
-  }
-}
-
-/* =========================================================
-   BUTTON
-   ========================================================= */
-
-.ctaButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.9rem 2.2rem;
-  font-family: var(--font-mono), monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--background);
-  background-color: var(--foreground);
-  border: 1px solid var(--foreground);
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.ctaButton:hover {
-  background-color: transparent;
+  --work-gutter: clamp(24px, 5.55vw, 80px);
+  --work-ease: cubic-bezier(.2, .8, .2, 1);
+  background: var(--surface);
   color: var(--foreground);
-  border-color: var(--accent);
+  scroll-margin-top: 80px;
+}
+.wrap { width: 100%; max-width: 1440px; margin-inline: auto; }
+.leadScreen, .supportingScreen { min-height: 100svh; display: flex; align-items: center; padding-inline: var(--work-gutter); }
+.leadScreen { padding-block: 88px 64px; }
+.supportingScreen { min-height: 0; padding-block: 48px 80px; }
+.sectionHeader { padding-bottom: 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 40px; }
+.eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-family: var(--font-body), Arial, sans-serif; font-size: 13px; line-height: 1.5; }
+.dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--logo-red); }
+.heading { margin: 0; font-family: var(--font-display), sans-serif; font-size: clamp(48px, 5.3vw, 76px); font-weight: 400; line-height: 1.04; letter-spacing: -.055em; }
+.fullStop { color: var(--logo-red); letter-spacing: 0; }
+
+.project { display: block; min-width: 0; color: inherit; text-decoration: none; transition: transform 120ms var(--work-ease); }
+.projectHeader { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+.projectIdentity { min-width: 0; }
+.projectMeta { margin: 0 0 10px; color: var(--muted); font-family: var(--font-body), Arial, sans-serif; font-size: 13px; line-height: 1.5; }
+.projectTitle { margin: 0; font-family: var(--font-display), sans-serif; font-size: clamp(24px, 2.2vw, 32px); font-weight: 400; line-height: 1.15; letter-spacing: -.035em; }
+.leadProject .projectTitle { font-size: clamp(28px, 2.6vw, 38px); }
+.projectTitle > span { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 6px; transition: text-decoration-color 150ms var(--work-ease); }
+.viewProject > span { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 6px; }
+.viewProject { display: inline-flex; align-items: center; justify-content: flex-end; gap: 14px; min-height: 48px; flex-shrink: 0; font-family: var(--font-body), Arial, sans-serif; font-size: 14px; line-height: 1.4; transition: color 150ms var(--work-ease); }
+.viewProject svg, .archiveLink svg { width: 20px; height: 20px; flex-shrink: 0; transition: transform 150ms var(--work-ease); }
+
+.leadMedia { display: grid; grid-template-columns: 1.45fr 1fr; gap: 12px; height: clamp(380px, 55svh, 600px); }
+.imageFrame { position: relative; min-width: 0; overflow: hidden; background: var(--line); }
+.imageFrame img { object-fit: cover; object-position: center; transition: transform 400ms var(--work-ease); }
+.imageFrame .exteriorImage { object-position: 50% 58%; }
+.imageFrame .interiorImage { object-position: 58% 50%; }
+.projectGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 4.4vw, 72px); }
+.supportingImage { height: auto; aspect-ratio: 3 / 2; }
+
+.archiveRow { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+.archiveRow > p { margin: 0; font-family: var(--font-body), Arial, sans-serif; font-size: 16px; line-height: 1.6; }
+.archiveLink { display: inline-flex; align-items: center; gap: 28px; min-height: 48px; color: var(--foreground); font-family: var(--font-body), Arial, sans-serif; font-size: 14px; line-height: 1.4; font-weight: 500; text-decoration: none; transition: color 120ms var(--work-ease); }
+.archiveLink > span { position: relative; }
+.archiveLink > span::after { content: ""; position: absolute; inset: auto 0 -6px; height: 1px; background: currentColor; transform: scaleX(.32); transform-origin: left; transition: transform 150ms var(--work-ease); }
+.project:focus-visible, .archiveLink:focus-visible { outline: 2px solid var(--action, var(--accent)); outline-offset: 6px; }
+.project:focus-visible .projectTitle > span { text-decoration-color: currentColor; transition: none; }
+.project:focus-visible .viewProject, .archiveLink:focus-visible { color: var(--action, var(--accent)); }
+.archiveLink:focus-visible > span::after { transform: scaleX(1); transition: none; }
+.project:active { transform: translateY(1px) scale(.995); transition-duration: 90ms; }
+
+@media (hover: hover) and (pointer: fine) {
+  .project:hover { transform: translateY(-2px); transition-duration: 180ms; }
+  .project:hover .imageFrame img { transform: scale(1.025); transition-duration: 600ms; }
+  .project:hover .projectTitle > span { text-decoration-color: currentColor; }
+  .project:hover .viewProject, .archiveLink:hover { color: var(--action, var(--accent)); }
+  .project:hover .viewProject svg, .archiveLink:hover svg { transform: translateX(3px); }
+  .archiveLink:hover > span::after { transform: scaleX(1); }
+  .project:active { transform: translateY(1px) scale(.995); transition-duration: 90ms; }
 }
 
-.ctaButton:active {
-  transform: scale(0.97);
-  transition-duration: 0.1s;
+@media (min-width: 640px) and (max-width: 1023px) {
+  .sectionHeader { margin-bottom: 32px; }
+  .heading { font-size: 48px; }
+  .viewProject > span { display: none; }
+  .viewProject { min-width: 44px; }
+  .projectMeta { max-width: 26ch; }
+  .projectHeader { gap: 12px; }
+  .projectTitle { font-size: 26px; }
+  .supportingImage { height: auto; aspect-ratio: 4 / 3; }
 }
 
-.ctaButton:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+@media (max-width: 639px) {
+  .leadScreen, .supportingScreen { min-height: 0; }
+  .leadScreen { padding-block: 64px 32px; }
+  .supportingScreen { padding-block: 24px 48px; }
+  .sectionHeader { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+  .heading { font-size: clamp(38px, 10.2vw, 58px); }
+  .projectHeader { gap: 12px; margin-bottom: 20px; }
+  .projectMeta { max-width: 30ch; margin-bottom: 8px; }
+  .projectTitle, .leadProject .projectTitle { font-size: clamp(26px, 7vw, 32px); }
+  .viewProject { min-width: 44px; }
+  .viewProject > span { display: none; }
+  .leadMedia { height: auto; grid-template-columns: 1fr; gap: 12px; }
+  .leadMedia .imageFrame { aspect-ratio: 3 / 2; }
+  .projectGrid { grid-template-columns: 1fr; gap: 40px; }
+  .supportingImage { height: auto; aspect-ratio: 4 / 3; }
+  .archiveRow { align-items: flex-start; flex-direction: column; gap: 16px; margin-top: 32px; padding-top: 24px; }
+  .archiveRow > p { max-width: 30ch; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .project, .imageFrame img, .projectTitle > span, .viewProject, .viewProject svg, .archiveLink, .archiveLink svg, .archiveLink > span::after { transition: none; }
+  .project:hover, .project:active, .project:hover .imageFrame img, .project:hover .viewProject svg, .archiveLink:hover svg { transform: none; }
+}
+
