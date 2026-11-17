@@ -1,1 +1,21 @@
 
+.study { display:flex; flex-direction:column; min-width:0; padding:24px 28px 16px; color:var(--foreground); background:var(--surface); border:1px solid var(--line); font-family:var(--font-body),Arial,sans-serif; }
+.topline { display:flex; align-items:center; justify-content:space-between; gap:16px; font-size:12px; line-height:1.5; color:var(--muted); }
+.topline > span:last-child { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.drawing { display:block; width:100%; min-height:0; flex:1; margin:4px 0; overflow:visible; }
+.guides { color:var(--muted); opacity:.23; }
+.secondary { opacity:.38; }
+.redSpace { stroke:var(--logo-red); fill:var(--logo-red); fill-opacity:.07; }
+.redLines { stroke:var(--logo-red); opacity:.5; }
+.annotations { color:var(--muted); font-family:var(--font-mono),monospace; font-size:8px; letter-spacing:1.5px; }
+.bottomline { display:flex; align-items:center; justify-content:space-between; gap:12px; border-top:1px solid var(--line); padding-top:8px; }
+.bottomline p { margin:0; font-size:14px; line-height:1.5; }
+.toggle { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:44px; padding:8px 4px 8px 12px; background:none; border:0; color:var(--foreground); font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+.redDot { display:block; width:12px; height:12px; flex:0 0 12px; border-radius:50%; background:var(--logo-red); outline:1px solid transparent; outline-offset:5px; transition:outline-color 160ms,transform 160ms; }
+.switchArrow { display:inline-block; font-size:18px; transition:transform 160ms; }
+.toggle:focus-visible { outline:2px solid var(--action,var(--foreground)); outline-offset:3px; }
+.toggle:active .redDot { transform:scale(.85); }
+.note { margin:6px 0 0; font-size:11px; line-height:1.6; color:var(--muted); }
+@media(hover:hover) and (pointer:fine) { .toggle:hover .redDot { outline-color:var(--logo-red); } .toggle:hover .switchArrow { transform:translateX(3px); } }
+@media(max-width:639px) { .study { padding:20px 20px 16px; } .drawing { flex:none; margin-block:16px; } .bottomline { align-items:flex-start; flex-direction:column; gap:0; padding-top:16px; } .toggle { padding-left:0; } }
+@media(prefers-reduced-motion:reduce) { .redDot,.switchArrow { transition:none; } .toggle:hover .switchArrow,.toggle:active .redDot { transform:none; } }
